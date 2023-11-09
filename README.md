@@ -10,7 +10,10 @@ User can change the following:
 - Change the number of rows.
 - Change the speed of the game.
 - Combine the previous three controls and produce a preset of _three difficulties._ 
-- **Stretch**: Power up items that change the ship's attack pattern.
+- **Stretch Features**
+- Power up items that change the ship's attack pattern.
+- Add Sprites.
+- Add Audio.
 
 Sprits will change when interacting with certain items.
 
@@ -44,30 +47,37 @@ I wanted to _combine my current knowledge_ as well as learn the following new th
 - keyboard inputs
 - sound
 
+Majority of canvas learning came from MDN documentation and SpicyYogurt
+https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial
+https://spicyyoghurt.com/tutorials/html5-javascript-game-development/images-and-sprite-animations
+
+I've also set up a Notion board capturing all my learning.
+https://www.notion.so/Canvas-5d6735fe420947ca823f2db9bacddb64?pvs=4
+
 **To start:**
 _italics are stretch goals_
-    HTML + CSS + JS: Project setup
-        directions
-        inputs
-        _difficulty control_
-    JS + CSS : game board/canvas size
-    JS + CSS : user's ship
-    JS + CSS : Create a ship
-    JS : connect ship and canvas
-    JS : Move the ship
-    JS + CSS : Create projectiles
-    JS + CSS : Create an Alien
-    JS : Create and move rows of Aliens
-    JS : Shoot Aliens
-    JS : Spawn rows on an interval
-    JS : Aliens shooting
-    JS + CSS : Alien sprite explosion
-    JS : Win/Lose conditions
-    JS : Score
-    _JS + CSS : Difficulty_
-    _JS + CSS : Rig sprite animation_
-    _JS + CSS : Power-ups_
-    _JS + CSS : Strong game UI_
+-HTML + CSS + JS: Project setup
+    -directions
+    -inputs
+    -_difficulty control_
+-JS + CSS : game board/canvas size
+-JS + CSS : user's ship
+-JS + CSS : Create a ship
+-JS : connect ship and canvas
+-JS : Move the ship
+-JS + CSS : Create projectiles
+-JS + CSS : Create an Alien
+-JS : Create and move rows of Aliens
+-JS : Shoot Aliens
+-JS : Spawn rows on an interval
+-JS : Aliens shooting
+-JS + CSS : Alien sprite explosion
+-JS : Win/Lose conditions
+-JS : Score
+-_JS + CSS : Difficulty_
+-_JS + CSS : Rig sprite animation_
+-_JS + CSS : Power-ups_
+-_JS + CSS : Strong game UI_
 
 
 

@@ -1,14 +1,26 @@
+body {
+    box-sizing: border-box;
+    margin: 0;
+}
+
+.flexCtr {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* started with grid and then changed to canvas
 .gameGrid {
     height: 720;
     width: 1280;
     border: solid black 1px;
-    /* if spawning gird item aliens we want to warp them by row and space them out */
+    if spawning gird item aliens we want to warp them by row and space them out 
     display: flex;
     flex-wrap: wrap;
 }
-
 .alienDot {
     width: 20px;
     height: 20px;
     background-color: red;
-}
+} 
+*/
