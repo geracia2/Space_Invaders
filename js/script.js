@@ -15,10 +15,3 @@ window.onload = function (){
 // our context initialized to a more readable variable
 const ctx = canvas.getContext('2d')
 
-// generate a square 
-ctx.fillRect(100, 100, 100, 100)
-
-// generate a line
-ctx.beginPath();
-
-

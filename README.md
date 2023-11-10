@@ -39,6 +39,30 @@ As this is a project from Per Scholas, the following are requirements I needed t
 - Responsive mobile design
 - Work with your instructor to determine additional stretch goals
 
+# Tech
+This project is meant to test my skills after 5 weeks of introductory programming. 
+
+- HTML5
+- Canvas
+- CSS3
+- JavaScript
+- PhotoShop
+
+# Installation / How to use?
+No installation is necessary.
+
+Runs directly in your browser. 
+
+This was tested in Chrome and LiveServer during development.
+
+# License
+Free to use, not to modify or sell.
+MIT © Aaron Geraci
+
+# Credits
+Some assets were created by me and others were sourced from the following:
+https://craftpix.net/# Space_Invaders
+
 # Approach
 I wanted to _combine my current knowledge_ as well as learn the following new things:
 - canvas and how to work with sprites
@@ -56,49 +80,24 @@ https://www.notion.so/Canvas-5d6735fe420947ca823f2db9bacddb64?pvs=4
 
 **To start:**
 _italics are stretch goals_
--HTML + CSS + JS: Project setup
-    -directions
-    -inputs
-    -_difficulty control_
--JS + CSS : game board/canvas size
--JS + CSS : user's ship
--JS + CSS : Create a ship
--JS : connect ship and canvas
--JS : Move the ship
--JS + CSS : Create projectiles
--JS + CSS : Create an Alien
--JS : Create and move rows of Aliens
--JS : Shoot Aliens
--JS : Spawn rows on an interval
--JS : Aliens shooting
--JS + CSS : Alien sprite explosion
--JS : Win/Lose conditions
--JS : Score
--_JS + CSS : Difficulty_
--_JS + CSS : Rig sprite animation_
--_JS + CSS : Power-ups_
--_JS + CSS : Strong game UI_
-
-
-
-# Tech
-This project is meant to test my skills after 5 weeks of introductory programming. 
-
-- HTML5
-- CSS3
-- JavaScript
-
-# Installation / How to use?
-No installation is necessary.
-
-Runs directly in your browser. 
-
-This was tested in Chrome and LiveServer during development.
-
-# License
-Free to use, not to modify or sell.
-MIT © Aaron Geraci
-
-# Credits
-Some assets were created by me and others were sourced from the following:
-https://craftpix.net/# Space_Invaders
+- HTML + CSS + JS: Project setup
+    - directions
+    - inputs
+    - _difficulty control_
+- JS + CSS : game board/canvas size
+- JS + CSS : Create user's ship Object
+- JS : connect ship and canvas
+- JS : Move the ship
+- JS + CSS : Create projectiles
+- JS + CSS : Create an Alien Class
+- JS : Create and move rows of Aliens
+- JS : Shoot Aliens
+- JS : Spawn rows on an interval
+- JS : Aliens shooting
+- JS + CSS : Alien sprite explosion
+- JS : Win/Lose conditions
+- JS : Score
+- _JS + CSS : Difficulty_
+- _JS + CSS : Rig sprite animation_
+- _JS + CSS : Power-ups_
+- _JS + CSS : Strong game UI_
