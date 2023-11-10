@@ -61,7 +61,7 @@ MIT © Aaron Geraci
 
 # Credits
 Some assets were created by me and others were sourced from the following:
-https://craftpix.net/# Space_Invaders
+https://craftpix.net/#%20Space_Invaders
 
 # Approach
 I wanted to combine my **_current knowledge_** as well as learn the following new things:
@@ -80,6 +80,7 @@ I've also set up a Notion board capturing all my learning.
 https://www.notion.so/Canvas-5d6735fe420947ca823f2db9bacddb64?pvs=4
 
 **To start:**
+
 _italics are stretch goals_
 - Research/Create sprites (max 1 hour)
 - Research Canvas (max 2 days)
