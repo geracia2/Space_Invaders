@@ -64,8 +64,9 @@ Some assets were created by me and others were sourced from the following:
 https://craftpix.net/# Space_Invaders
 
 # Approach
-I wanted to _combine my current knowledge_ as well as learn the following new things:
-- canvas and how to work with sprites
+I wanted to combine my **_current knowledge_** as well as learn the following new things:
+- canvas
+- how to work with sprite sheets
 - gravity
 - sprite changes
 - keyboard inputs
@@ -80,24 +81,30 @@ https://www.notion.so/Canvas-5d6735fe420947ca823f2db9bacddb64?pvs=4
 
 **To start:**
 _italics are stretch goals_
+- Research/Create sprites (max 1 hour)
+- Research Canvas (max 2 days)
 - HTML + CSS + JS: Project setup
     - directions
     - inputs
     - _difficulty control_
 - JS + CSS : game board/canvas size
-- JS + CSS : Create user's ship Object
-- JS : connect ship and canvas
+- JS + CSS : Create userShip Object
+- JS : addEventListeners on canvas for key inputs
+- JS : animate() and requestAnimationFrame(animate())
+- JS : userShip's Method for moving
 - JS : Move the ship
+- JS : userShip's Method for shooting
 - JS + CSS : Create projectiles
-- JS + CSS : Create an Alien Class
-- JS : Create and move rows of Aliens
-- JS : Shoot Aliens
+- JS + CSS : Create an Aliens Class
+- JS : Generate AlienFleet array
+- JS : Move rows of Aliens
 - JS : Spawn rows on an interval
-- JS : Aliens shooting
-- JS + CSS : Alien sprite explosion
+- JS : Aliens collision method
+- JS : Aliens shooting Method
 - JS : Win/Lose conditions
 - JS : Score
-- _JS + CSS : Difficulty_
-- _JS + CSS : Rig sprite animation_
-- _JS + CSS : Power-ups_
-- _JS + CSS : Strong game UI_
+- **_JS + CSS : Difficulty_**
+- **_JS + CSS : userShip sprite animation_**
+- **_JS + CSS : Alien sprite explosion_**
+- **_JS + CSS : Power-ups_**
+- **_JS + CSS : Strong game UI_**
