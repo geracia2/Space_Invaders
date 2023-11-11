@@ -89,9 +89,10 @@ _italics are stretch goals_
     - inputs
     - _difficulty control_
 - JS + CSS : game board/canvas size
+- JS : Game loop via recursive function
+    - Initialize > Game Loop [ Update > Draw > Game Loop]
 - JS + CSS : Create userShip Object
 - JS : addEventListeners on canvas for key inputs
-- JS : animate() and requestAnimationFrame(animate())
 - JS : userShip's Method for moving
 - JS : Move the ship
 - JS : userShip's Method for shooting

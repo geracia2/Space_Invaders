@@ -1,11 +1,14 @@
-////////////////////////
-// GAME LOOP LOGIC
+////////////////////////////////////////////////////////////////////////
+// ON LOAD SETUP
 ////////////////////////
 
 let canvas;
 let context;
 
-window.onload = init(); // as soon as canvas is generated run init function.
+window.onload = init();
+// as soon as canvas is generated run init function. 
+// onload and a function also allows canvas to cache the right variables to 
+// things like dynamic image resizes and sprite slices
 
 function init(){
     /* this function forces all resources to load in before canvas is rendered
@@ -27,10 +30,13 @@ function init(){
     //     canvas.height = canvasMaxHeight;
     // }
     // });
+    addEventListener('keydown', function(evt){
+        console.log(evt);
+    })
     window.requestAnimationFrame(gameLoop); // START the first frame request
 }   
 
-////////////////////////
+////////////////////////////////////////////////////////////////////////
 // CLASSES | OBJECTS
 ////////////////////////
 
@@ -39,67 +45,87 @@ class UserShip {
     all will be dynamically created so we need to update them with parameters
     treat this like the brain, no form information, just placeholder*/
     constructor(){
-        // can't call position directly so we need to save it as an object because it takes multiple values
-        this.position = {
-            xPos: 500,
-            yPos: 500
-        }
         this.velocity = {
             xVel: 0,
             yVel: 0
         }
-        
-        // new Image is an object that comes within JS's API, loads an image-like object via JS
-        let image = new Image();
-        image.src = 'images/Sprites/Fighter_single_192x192.png';
-
-        this.width = 192;
-        this.height = 192;
-        this.sprite = image;
-
+        // // you have to declare image source before using it as a class key
+        // // new Image is an object that comes within JS's API, loads an image-like object via JS
+        // // this can also be placed globally
+        // const userShipIMG = new Image();
+        // userShipIMG.src = 'images/Sprites/Fighter_single_192x192.png';
+        userShipIMG.onload = () => { // on image load set properties to...
+            this.sprite = userShipIMG;
+            this.width = userShipIMG.width * playerScale;
+            this.height = userShipIMG.height * playerScale;
+            this.position = { // can't call position directly so we need to save it as an object because it takes multiple values
+                // xPos: 500,
+                // yPos: 500
+                xPos: canvas.width / 2 - this.width / 2,
+                yPos: canvas.height / 2 + this.height
+            }
+        }
     }
     // draw a box to start giving form
     // draw is all the attributes you will see including loaded images
     draw(){
-        ctx.fillStyle = "green";
-        ctx.fillRect(this.position.xPos + 64, this.position.yPos + 44, 64, 109)
-        ctx.drawImage(this.sprite, this.position.xPos, this.position.yPos)
+        if (this.sprite){
+            // console.log(`load sprite`);
+            ctx.fillStyle = "green";
+            ctx.fillRect(this.position.xPos + 64, this.position.yPos + 44, 64, 109)
+            ctx.drawImage(this.sprite, this.position.xPos, this.position.yPos, this.width, this.height )
+        }
     }
 }
 
-
-let background = {
-
-}
-////////////////////////
+////////////////////////////////////////////////////////////////////////
 // IMAGES
 ////////////////////////
 
-// let userShipIMG = new Image();
-// userShipIMG.src = 'images/Sprites/Fighter_single_192x192.png';
+// you have to declare image source before using it as a class key
+// new Image is an object that comes within JS's API, loads an image-like object via JS
+// this can be placed statically in the class
+let userShipIMG = new Image();
+userShipIMG.src = 'images/Sprites/Fighter_single_192x192.png';
 
+const background = {
 
-////////////////////////
+    draw(){
+        ctx.fillStyle = 'black',
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
+    }
+}
+
+////////////////////////////////////////////////////////////////////////
 // GLOBAL VARIABLES
 ////////////////////////
-const player = new UserShip()
-console.log(player)
+// add all variables that will effect drawn objects first
+const playerScale = 1; // check class if comm out. Update depending on needs
+let playerVelocity = 50; // check class if comm out. Global movement speed, redeclare per object as needed
+
+
 
 // variables needed to set FPS
 // we do not need to define timeStamp as is is a protected word
 let secondsPassed = 0;
 let oldTimeStamp = 0;
 let fps;
-let velocity = 50; // global movement speed, redeclare per object as needed
 
+// add all drawn objects last, effected by above global variables
+const player = new UserShip() // initialize the player
+console.log(player)
 
-////////////////////////
+////////////////////////////////////////////////////////////////////////
 // FUNCTIONS
 ////////////////////////
 
-function gameLoop(timeStamp){
+function gameLoop(timeStamp){ // Set up flow of functions 
     // console.log('game loop started')
+
     /*
+    // !! AVOID having a game that moves as fast are screen refresh 
+    // !! we can cap movement to time rather than refresh rate
+
     // starting loop with access to timeStamp parameter
     // Calculate the number of seconds passed since the last frame
     secondsPassed = Math.min(((timeStamp - oldTimeStamp) / 1000), 0.1); // Move forward in time with a maximum amount, change this number at the end
@@ -114,32 +140,41 @@ function gameLoop(timeStamp){
     // ctx.font = '25px Arial';
     // ctx.fillStyle = 'black';
     // ctx.fillText("FPS: " + fps, 10, 30);
-    
-    update(secondsPassed); // Make changes to the properties
     */
-    draw(); // Perform the drawing operation
 
-    // The loop function has reached it's end. Keep requesting new frames
-    window.requestAnimationFrame(gameLoop);
+    ////////////////////////////////////////////////////////////////////////
+    // CALLING GAME LOOP
+    ///////////////////////////
+    // init > gameloop [ calcs, update > draw > gameloop ]
+    ///////////////////////////
+    update(secondsPassed); // Make changes to the properties
+    draw(); // Perform the drawing operations
+    window.requestAnimationFrame(gameLoop); // The loop function has reached it's end. Keep requesting new frames
 }
 
-function draw(){ // generate your first objects
-    console.log('draw started')
+function draw(){ // Generate objects
+    // console.log('draw started')
 
     ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the entire canvas
+    /* example of how to adjust movement by time not refresh
     // let randomColor = Math.random() > 0.5? '#ff8080' : '#0099b0';
     // // objects that have calculations in them are recalculated every frame now
     // context.fillStyle = randomColor;
     // context.fillRect(rectX, rectY, 200, 175);
-    player.draw()
-    // console.log('player drawn')
+    */
+
+    // organize layers by bottom on top of list
+    background.draw();
+    player.draw();
 
 }
 
-function update(secondsPassed) { // update or animate 
-    // console.log(`update started`);
-
+function update(secondsPassed) { // Animate 
+    console.log(`update started`);
+    /* example of how to adjust movement by time not refresh
     // Use time to calculate new position
     // rectX += (velocity * secondsPassed);
     // rectY += (velocity * secondsPassed);
+    */
+
 }
