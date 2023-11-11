@@ -30,9 +30,9 @@ function init(){
     //     canvas.height = canvasMaxHeight;
     // }
     // });
-    addEventListener('keydown', function(evt){
-        console.log(evt);
-    })
+
+    
+
     window.requestAnimationFrame(gameLoop); // START the first frame request
 }   
 
@@ -69,14 +69,58 @@ class UserShip {
     // draw a box to start giving form
     // draw is all the attributes you will see including loaded images
     draw(){
-        if (this.sprite){
-            // console.log(`load sprite`);
+        // console.log(`load sprite`);
+        if (this.sprite){ // truthy as it is not null. waiting on a load
+            // console.log(`player class draw`);
             ctx.fillStyle = "green";
             ctx.fillRect(this.position.xPos + 64, this.position.yPos + 44, 64, 109)
             ctx.drawImage(this.sprite, this.position.xPos, this.position.yPos, this.width, this.height )
         }
     }
+    update(){
+        // console.log(`player class update`);
+        if (this.sprite){ // truthy as it is not null
+            // console.log(`player class update`)
+            this.draw(); // generate object
+            this.position.xPos += this.velocity.xVel;
+        }
+    }
 }
+
+////////////////////////////////////////////////////////////////////////
+// LISTENERS
+////////////////////////
+// MOVEMENT
+//need an event listener for keydown A and D, evt.key does this
+const keyDown = addEventListener('keydown', (evt) => {
+    // console.log(evt.key);
+    // update player xPos: a = xPos -1 && d = xPos + 1
+    switch (evt.key) {
+        case 'a':
+            // console.log('left');
+            player.velocity.xVel = -playerGameVelocity;
+            // movementLeft();
+            break;
+        case 'd':
+            // console.log('right');
+            player.velocity.xVel = playerGameVelocity;
+            // movementRight()
+            break;
+        case ' ':
+            // console.log('fire');
+            // fire
+            break;
+        default:
+            break;
+    }
+        /*
+        if (evt.key === 'a') {
+            player.position.xPos -= player.velocity.xVel;
+        } else if (evt.key === 'd'){
+            player.position.xPos += player.velocity.xVel;
+        }
+        */
+})
 
 ////////////////////////////////////////////////////////////////////////
 // IMAGES
@@ -101,7 +145,7 @@ const background = {
 ////////////////////////
 // add all variables that will effect drawn objects first
 const playerScale = 1; // check class if comm out. Update depending on needs
-let playerVelocity = 50; // check class if comm out. Global movement speed, redeclare per object as needed
+const playerGameVelocity = 5; // check class if comm out. Global movement speed, redeclare per object as needed
 
 
 
@@ -170,11 +214,11 @@ function draw(){ // Generate objects
 }
 
 function update(secondsPassed) { // Animate 
-    console.log(`update started`);
+    // console.log(`update started`);
     /* example of how to adjust movement by time not refresh
     // Use time to calculate new position
     // rectX += (velocity * secondsPassed);
     // rectY += (velocity * secondsPassed);
     */
-
+    player.update();
 }
