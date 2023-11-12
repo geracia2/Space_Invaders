@@ -63,18 +63,19 @@ class UserShip {
             this.height = userVariables.shipTileHeight * playerScale;
             this.xPos = (canvas.width/2) - (this.width/2); // can't call position directly so we need to save it as an object because it takes multiple values
             this.yPos = (canvas.height / 2) + (this.height);
+
         }
     }
     draw(){ // draw is all the attributes you will see including loaded images
         // console.log(`load sprite`);
         if (this.sprite){ // truthy as it is not null. waiting on a load
             // console.log(`player class draw`);
-            ctx.fillStyle = "blue";
-            ctx.fillRect(this.xPos, this.yPos, 192, 192)
-            ctx.fillStyle = "green";
-            ctx.fillRect(this.xPos + 64, this.yPos + 44, 64, 109)
+            // ctx.fillStyle = "blue";
+            // ctx.fillRect(this.xPos, this.yPos, 192, 192)
+            // ctx.fillStyle = "green";
+            // ctx.fillRect(this.xPos + 64, this.yPos + 44, 64, 109)
             // ctx.drawImage(this.sprite, this.xPos, this.yPos, this.width, this.height )
-            ctx.drawImage(this.sprite, 192, 0, 192, 192, this.xPos, this.yPos, this.width, this.height) // frame 3,1
+            ctx.drawImage(this.sprite, 0, 0, 192, 192, this.xPos, this.yPos, this.width, this.height) // frame 3,1
             // // context.drawImage(img, startCropX, startCropY, endXCropAfter, endYCropAfter, x, y, width,height)
         }
     }
@@ -84,6 +85,9 @@ class UserShip {
             // console.log(`player class update`)
             this.draw(); // generate object
             this.xPos += this.xVel;
+            this.xMiddle = (this.xPos + (this.width / 2));
+            this.yMiddle = (this.yPos + (this.height / 2));
+            // console.log (this.middle)
         }
     }
     borderCheck() {
@@ -150,7 +154,7 @@ const keyDown = addEventListener('keydown', (evt) => {
         case ' ':
             // console.log('fire');
             keys.space.pressed = true;
-            laserArray.push(new Laser(0, 0, 5))
+            laserArray.push(new Laser(player.xMiddle - (userVariables.projectileWidth * .5), player.yMiddle - (userVariables.projectileHeight), -6))
             console.log(laserArray);
             break;
         default:
