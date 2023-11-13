@@ -44,29 +44,85 @@ function init(){
 // CLASSES | OBJECTS
 ////////////////////////
 
+class UserShip {
+    /* Position, movement, dimensions, image, shooting, damage
+    all will be dynamically created so we need to update them with parameters
+    treat this like the brain, no form information, just placeholder*/
+    constructor(){
+        // // you have to declare image source before using it as a class key
+        // // new Image is an object that comes within JS's API, loads an image-like object via JS
+        // // this can also be placed globally
+        // const userShipIMG = new Image();
+        // userShipIMG.src = 'images/Sprites/Fighter_single_192x192.png';
 
-class Laser {
-    constructor(xPos, yPos, yVel) {
-        this.xPos = xPos;
-        this.yPos = yPos;
-        this.xVel = 0;
-        this.yVel = yVel;
-        this.width = 30;
-        this.height = 8;
-        this.sprite = laserIMG;
+        userShipIMG.onload = ()=> { // on image load set properties to...
+            this.xVel = 0;
+            this.yVel = 0;
+            this.sprite = userShipIMG;
+            this.width = userVariables.shipTileWidth * playerScale;
+            this.height = userVariables.shipTileHeight * playerScale;
+            this.xPos = (canvas.width/2) - (this.width/2); // can't call position directly so we need to save it as an object because it takes multiple values
+            this.yPos = (canvas.height / 2) + (this.height);
+
+        }
     }
-    draw(){
-        console.log('draw laser')
-        ctx.drawImage(this.sprite, 0, 0, 8, 30)
+    draw(){ // draw is all the attributes you will see including loaded images
+        // console.log(`load sprite`);
+        if (this.sprite){ // truthy as it is not null. waiting on a load
+            // console.log(`player class draw`);
+            // ctx.fillStyle = "blue";
+            // ctx.fillRect(this.xPos, this.yPos, 192, 192)
+            // ctx.fillStyle = "green";
+            // ctx.fillRect(this.xPos + 64, this.yPos + 44, 64, 109)
+            // ctx.drawImage(this.sprite, this.xPos, this.yPos, this.width, this.height )
+            ctx.drawImage(this.sprite, 0, 0, 192, 192, this.xPos, this.yPos, this.width, this.height) // frame 3,1
+            // // context.drawImage(img, startCropX, startCropY, endXCropAfter, endYCropAfter, x, y, width,height)
+        }
     }
     update(){
-        // console.log('update laser')
-        if (this.sprite){
-            // console.log('update laser')
+        // console.log(`player class update`);
+        if (this.sprite){ // truthy as it is not null
+            // console.log(`player class update`)
+            this.draw(); // generate object
+            this.xPos += this.xVel;
+            this.xMiddle = (this.xPos + (this.width / 2));
+            this.yMiddle = (this.yPos + (this.height / 2));
+            // console.log (this.middle)
+        }
+    }
+    borderCheck() {
+        // if (keys.a.pressed && player.xPos >= 0  - (player.width * .25))
+        // if (keys.d.pressed && player.xPos <= canvas.width - (player.width * .75))
+        if ((keys.a.pressed && this.xPos >= 0  - (this.width * .25)) || (keys.d.pressed && this.xPos <= canvas.width - (this.width * .75))) {
+            userVariables.safeArea = true;
+        } else {
+            userVariables.safeArea = false;
+        }
+    }  
+}
+class Laser {
+    constructor(xPos, yPos, yVel) {
+        // laserIMG.onload = ()=> {
+            this.xVel = 0;
+            this.yVel = yVel;
+            this.xPos = xPos;
+            this.yPos = yPos;
+            this.width = 8;
+            this.height = 30;
+            this.sprite = laserIMG;
+        // }
+    }
+    draw(){
+        // if (this.sprite){
+            ctx.drawImage(this.sprite, this.xPos, this.yPos, this.width, this.height)
+        // }
+    }
+    update(){
+        // if (this.sprite){
             draw();
             this.xPos += this.xVel;
             this.yPos += this.yVel;
-        }
+        // }
     }
 }
 
@@ -98,6 +154,8 @@ const keyDown = addEventListener('keydown', (evt) => {
         case ' ':
             // console.log('fire');
             keys.space.pressed = true;
+            // laserArray.push(new Laser(player.xMiddle - (userVariables.projectileWidth * .5), player.yMiddle - (userVariables.projectileHeight), -6))
+            // console.log(laserArray);
             break;
         default:
             // keys.a.pressed = false; // doesnt do anything?
@@ -129,15 +187,16 @@ const keyUp = addEventListener('keyup', (evt) => { // copy keyDown listener to c
 
 // new Image is an object that comes within JS's API, loads an image-like object via JS
 // this can be placed statically in the class
-// let userShipIMG = new Image();
-// // userShipIMG.src = 'images/Sprites/Fighter_single_192x192.png';
-// userShipIMG.src = 'images/Sprites/Fighter_Spritelist_update_1728x1536.png';
+let userShipIMG = new Image();
+// userShipIMG.src = 'images/Sprites/Fighter_single_192x192.png';
+userShipIMG.src = 'images/Sprites/Fighter_Spritelist_update_1728x1536.png';
 
 let laserIMG = new Image();
 laserIMG.src = 'images/Sprites/Laser_Spritelist_8x30.png';
 
+const player = new UserShip() // initialize the player after loading its image
 
-let lasers = [new Laser(300, 300, 5)]
+let laserArray = []
 
 const background = {
     draw(){
@@ -198,9 +257,9 @@ function draw(){ // Generate objects
     
     // organize layers by bottom on top of list
     background.draw();
-
-    // player.draw();
-    lasers.forEach((value) => {
+    player.draw();
+    
+    laserArray.forEach((value) => {
         value.draw()
     })
 }
@@ -208,26 +267,29 @@ function draw(){ // Generate objects
 function update(secondsPassed) { // Animate - final decision on how to change is made here
     // console.log(`update started`);
     
-    // player.update();
-    // player.borderCheck();
+    player.update();
+    player.borderCheck();
 
     // enable player movement if all is true
     if (keys.a.pressed && userVariables.safeArea){
-        // player.xVel = -playerGameVelocity;
+        player.xVel = -playerGameVelocity;
         // update sprite clip
     } else if (keys.d.pressed && userVariables.safeArea){
-        // player.xVel = playerGameVelocity;
+        player.xVel = playerGameVelocity;
         // update sprite clip
     } else if (keys.space.pressed){
         // do something to fire
-        lasers =[new Laser(500, 500, 5)]
+        laserArray.push(new Laser(player.xMiddle - (userVariables.projectileWidth * .5), player.yMiddle - (userVariables.projectileHeight), -6))
+        console.log(laserArray);
     } else {
-        // player.xVel = 0;
+        player.xVel = 0;
         // set sprite clip back to 0
     }
-    
-    // fire a laser from laser array
-    lasers.forEach((value) => {
+    // update each laser's properties
+    laserArray.forEach((value) => { 
         value.update()
     })
+    if (laserArray.length > 50){
+        laserArray.shift();
+    }
 }

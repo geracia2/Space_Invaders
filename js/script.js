@@ -13,7 +13,7 @@ window.onload = init();
 // things like dynamic image resizes and sprite slices
 
 function init(){
-    /* this function forces all resources to load in before canvas is rendered
+    /* this function forces canvas data and gameLoop() to load in before canvas is rendered
     */
     console.log('init started')
 
@@ -35,8 +35,6 @@ function init(){
     });
     */
 
-    
-    
     window.requestAnimationFrame(gameLoop); // START the first frame request
 }   
 
@@ -68,7 +66,7 @@ class UserShip {
     }
     draw(){ // draw is all the attributes you will see including loaded images
         // console.log(`load sprite`);
-        if (this.sprite){ // truthy as it is not null. waiting on a load
+        if (this.sprite){ // truthy as it is not null. waiting on a load of image to update and avoid errors
             // console.log(`player class draw`);
             // ctx.fillStyle = "blue";
             // ctx.fillRect(this.xPos, this.yPos, 192, 192)
@@ -114,7 +112,7 @@ class Laser {
     }
     draw(){
         // if (this.sprite){
-            ctx.drawImage(this.sprite, this.xPos, this.yPos, this.width, this.height)
+            ctx.drawImage(this.sprite, this.xPos, this.yPos, this.width, this.height);
         // }
     }
     update(){
@@ -124,6 +122,38 @@ class Laser {
             this.yPos += this.yVel;
         // }
     }
+}
+class EnemyShip {
+    constructor(params) {
+        enemyShipIMG.onload = ()=> { // update based on loading of game or start, 
+            this.xVel = 0;
+            this.yVel = 0;
+            this.sprite = enemyShipIMG;
+            this.width = userVariables.enemyTileWidth * enemyScale;
+            this.height = userVariables.enemyTileHeight * enemyScale;
+            this.xPos = (canvas.width/2) - (this.width/2); // can't call position directly so we need to save it as an object because it takes multiple values
+            this.yPos = (canvas.height / 2) + (this.height);
+        }
+    }
+    draw() {
+        if (this.sprite){
+        ctx.drawImage(this.sprite, this.xPos, this.yPos, this.width, this.height);
+        }
+    }
+    update(){
+        draw();
+        this.xPos += this.xVel;
+        this.yPos += this.yVel;
+        this.xMiddle = (this.xPos + (this.width / 2)); // middle needs to be updated per current pos, so it goes in update()
+        this.yMiddle = (this.yPos + (this.height / 2)); // it can go in draw, but that goes against gameloop logic
+    }
+}
+class EnemyFactory {
+    // position, velocity, amountArray, 
+    constructor(params) {
+        
+    }
+
 }
 
 
@@ -190,13 +220,16 @@ const keyUp = addEventListener('keyup', (evt) => { // copy keyDown listener to c
 let userShipIMG = new Image();
 // userShipIMG.src = 'images/Sprites/Fighter_single_192x192.png';
 userShipIMG.src = 'images/Sprites/Fighter_Spritelist_update_1728x1536.png';
+const player = new UserShip() // initialize the player after loading its image
 
 let laserIMG = new Image();
 laserIMG.src = 'images/Sprites/Laser_Spritelist_8x30.png';
-
-const player = new UserShip() // initialize the player after loading its image
-
 let laserArray = []
+
+let enemyShipIMG = new Image();
+userShipIMG.src = 'images/Sprites/Fighter_single_192x192.png';
+enemyShipIMG.src = 'images/Sprites/EnemyShip_90x90.png';
+const enemy = new EnemyShip() // initialize the player after loading its image
 
 const background = {
     draw(){
@@ -210,11 +243,14 @@ const background = {
 ////////////////////////
 // add all variables that will effect drawn objects first
 const playerScale = 1; // check class if comm out. Update depending on needs
+const enemyScale = .75; // check class if comm out. Update depending on needs
 const playerGameVelocity = 4; // check class if comm out. Global movement speed, redeclare per object as needed. 4 is a good number
 
 const userVariables = {
     shipTileWidth : 192,
     shipTileHeight : 192,
+    enemyTileWidth : 90,
+    enemyTileHeight : 90,
     projectileWidth : 8,
     projectileHeight : 30,
     safeArea : true,
@@ -251,42 +287,47 @@ function gameLoop(timeStamp){ // Set up flow of functions
     window.requestAnimationFrame(gameLoop); // The loop function has reached it's end. Keep requesting new frames
 }
 
-function draw(){ // Generate objects
+function draw(){ // Needed to draw the object the first time making it available for update
     // console.log('draw started')
     ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the entire canvas
-    
     // organize layers by bottom on top of list
-    background.draw();
-    player.draw();
+    background.draw(); // init first draw
+    enemy.draw();
+    laserArray.forEach((value) => {value.draw()}) // init first draw per array value 
+    player.draw(); // init first draw
     
-    laserArray.forEach((value) => {
-        value.draw()
-    })
 }
 
-function update(secondsPassed) { // Animate - final decision on how to change is made here
+function update(secondsPassed) { // Animate - final decision on how a change is made here
     // console.log(`update started`);
-    
-    player.update();
     player.borderCheck();
-
-    // enable player movement if all is true
-    if (keys.a.pressed && userVariables.safeArea){
-        player.xVel = -playerGameVelocity;
-        // update sprite clip
-    } else if (keys.d.pressed && userVariables.safeArea){
-        player.xVel = playerGameVelocity;
-        // update sprite clip
+    player.update();
+    enemy.update();
+    
+    // enable player movement if all are true
+    if (keys.a.pressed && userVariables.safeArea && !keys.d.pressed){ // a is pressed and inside safeArea
+        player.xVel = -playerGameVelocity; // b/c of update(), position = velocity and xVel is 0 until now, -4 (left)
+        // **STRETCH** update sprite clipping for fame animation
+    } else if (keys.d.pressed && userVariables.safeArea && !keys.a.pressed){
+        player.xVel = playerGameVelocity;  // b/c of update(), position = velocity and xVel is 0 until now, 4 (left)
+        // **STRETCH** update sprite clipping for fame animation
     } else if (keys.space.pressed){
         // do something to fire
-        lasers =[new Laser(100, 100, 5)]
+        // when laser update is placed here we get a continuous shot of lasers on each frame.
+        
+        
+        // laserArray.push(new Laser(player.xMiddle - (userVariables.projectileWidth * .5), player.yMiddle - (userVariables.projectileHeight), -6))
+        // console.log(laserArray);
     } else {
         player.xVel = 0;
         // set sprite clip back to 0
     }
     
-    // fire a laser from laser array
-    laserArray.forEach((value) => {
+    laserArray.forEach((value) => { // update each laser's properties
         value.update()
     })
+    if (laserArray.length > 50){ // remove lasers when 
+        laserArray.shift();
+    }
+
 }

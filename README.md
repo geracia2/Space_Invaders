@@ -63,6 +63,9 @@ MIT © Aaron Geraci
 Some assets were created by me and others were sourced from the following:
 https://craftpix.net/#%20Space_Invaders
 
+# Known Bugs
+- if pressing Space and or W, A; player breaks safe margin
+
 # Approach
 I wanted to combine my **_current knowledge_** as well as learn the following new things:
 - canvas
@@ -96,9 +99,9 @@ _italics are stretch goals_
 - JS : userShip's Method for moving
 - JS : Move the ship
 - JS : userShip's Method for shooting
-- JS + CSS : Create projectiles
-- JS + CSS : Create an Aliens Class
-- JS : Generate AlienFleet array
+- JS : Create projectiles
+- JS : Create an Aliens Class 
+- JS : Generate AlienFleet class with array **currently on**
 - JS : Move rows of Aliens
 - JS : Spawn rows on an interval
 - JS : Aliens collision method
