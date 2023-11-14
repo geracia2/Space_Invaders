@@ -105,7 +105,7 @@ _italics are stretch goals_
 - JS : Create LasersArray and generate new Lasers on input
 - JS : Create an Aliens Class 
 - JS : Create an AlienFleet class 
-    - enemyGrid[] > EnemyGenerator() > enemyFleet[] > enemyShip{} **| Currently doing |**
+    - enemyGrid[] > EnemyGenerator() > enemyFleet[] > enemyShip{} 
         - draw on: load
         - update on: every frame
     - need an array to hold and push into
@@ -115,7 +115,7 @@ _italics are stretch goals_
 - JS : Move rows of Aliens
 - JS : Spawn rows on an interval
 - JS : Aliens collision method
-- JS : Aliens shooting Method
+- JS : Aliens shooting Method **| Currently doing |**
 - JS : Win/Lose conditions
 - JS : Score
 - **_JS + CSS : Difficulty_**
