@@ -87,10 +87,10 @@ class UserShip {
             this.xMiddle = (this.xPos + (this.width / 2));
             this.yMiddle = (this.yPos + (this.height / 2));
             // console.log (this.middle)
-            this.colLeft = this.xPos;
-            this.colTop = this.xPos
-            this.colRight = this.xPos + this.width;
-            this.colBottom = this.xPos + this.height
+            // this.colLeft = this.xPos;
+            // this.colTop = this.xPos
+            // this.colRight = this.xPos + this.width;
+            // this.colBottom = this.xPos + this.height
         }
     }
     borderCheck() {
@@ -125,9 +125,9 @@ class Laser {
             draw();
             this.xPos += this.xVel;
             this.yPos += this.yVel;
-            this.colLeft = this.xPos;
-            this.colRight = this.xPos + this.width
-            this.colTop = this.xPos
+            // this.colLeft = this.xPos;
+            // this.colRight = this.xPos + this.width
+            // this.colTop = this.xPos
 
         // }
     }
@@ -156,10 +156,10 @@ class EnemyShip {
         this.yPos += yVel;
         this.xMiddle = (this.xPos + (this.width / 2)); // middle needs to be updated per current pos, so it goes in update()
         this.yMiddle = (this.yPos + (this.height / 2)); // it can go in draw, but that goes against gameloop logic
-        this.colLeft = this.xPos;
-        this.colRight = this.xPos + this.width;
-        this.colBottom = this.xPos + this.height
-        this.colTop = this.xPos
+        // this.colLeft = this.xPos;
+        // this.colTopRight = this.xPos + this.width;
+        // this.colBottomRight = this.xPos + this.height
+        // this.colTop = this.xPos
     }
 }
 class EnemyGenerator { // this could have been just an array but with a class we can access more properties dynamically
@@ -168,9 +168,9 @@ class EnemyGenerator { // this could have been just an array but with a class we
         this.name = name;
         this.xVel = usVar.enemySpeed;
         this.yVel = 0;
-        this.yJump = usVarClac.enemyAdjustedDim;
+        this.yJump = (usVarClac.enemyAdjustedDim + usVar.gap) * 2;
         this.xPos = 0;
-        this.yPos = 0;
+        this.yPos = 0; 
         this.width = (usVarClac.enemyAdjustedDim + usVar.gap) * usVar.enemyRows,
         this.enemyFleet = [];// init new enemy here on each class init
         this.rows = enemyRows; // make dynamic later | enemyRows
@@ -443,10 +443,12 @@ function update(secondsPassed) { // Animation - final decision on how a change i
             ship.update(generator.xVel, generator.yVel); // you can target generators's elements with placeholder!
             // check for collision with laser
             laserArray.forEach((laser, j) => { 
-                console.log(laser[j])
-                if (laser.colTop <= ship.colBottom 
-                    // && laser.colLeft <= ship.colLeft 
-                    // && laser.colRight <= ship.colRight
+                // console.log(laser[j])
+                if (
+                       laser.yPos <= (ship.yPos + ship.height) // las top < to Enm bottom === hit
+                    && (laser.yPos - laser.height) >= ship.yPos // las bottom > above Enm top == hit
+                    && laser.xPos >= ship.xPos
+                    && (laser.xPos + laser.width) <= (ship.xPos + ship.width)
                     ){ 
                     // console.log(`hit`);
                     setTimeout(() => {
@@ -458,7 +460,7 @@ function update(secondsPassed) { // Animation - final decision on how a change i
         });
     });
 
-    if (enemyGrid.length > 3){ // remove the first class generator when we get too high to cut down on memory
+    if (enemyGrid.length > 10){ // remove the first class generator when we get too high to cut down on memory
         console.log(`>>>>>> killing a generator`);
         enemyGrid.shift();
     }
@@ -467,7 +469,7 @@ function update(secondsPassed) { // Animation - final decision on how a change i
     usVar.gameFrame++
     // console.log(usVar.gameFrame);
     // we want to spawn a new fleet every 3500 frames
-    if (usVar.gameFrame % 3500 === 0){ // |STRETCH| setup a random range and interval
+    if (usVar.gameFrame % 500 === 0){ // |STRETCH| setup a random range and interval
         console.log(`reach 3500`);
         enemyGrid.push(new EnemyGenerator(usVar.enemyRows, usVar.enemyColumns));
         // console.log(enemyGrid);
