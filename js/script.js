@@ -57,9 +57,10 @@ class UserShip {
         this.yVel = 0;
         this.sprite = userShipIMG;
         userShipIMG.onload = ()=> { // on image load set properties to...
-            this.width = userVariables.shipTileWidth * playerScale;
-            this.height = userVariables.shipTileHeight * playerScale;
-            this.xPos = (canvas.width/2) - (this.width/2); // can't call position directly so we need to save it as an object because it takes multiple values
+            this.width = usVar.shipTileWidth * usVar.playerScale;
+            this.height = usVar.shipTileHeight * usVar.playerScale;
+            // can't call position directly so we need to save it as an object because it takes multiple values
+            this.xPos = (canvas.width/2) - (this.width/2); 
             this.yPos = (canvas.height / 2) + (this.height);
 
         }
@@ -92,9 +93,9 @@ class UserShip {
         // if (keys.a.pressed && player.xPos >= 0  - (player.width * .25))
         // if (keys.d.pressed && player.xPos <= canvas.width - (player.width * .75))
         if ((keys.a.pressed && this.xPos >= 0  - (this.width * .25)) || (keys.d.pressed && this.xPos <= canvas.width - (this.width * .75))) {
-            userVariables.safeArea = true;
+            usVar.safeArea = true;
         } else {
-            userVariables.safeArea = false;
+            usVar.safeArea = false;
         }
     }  
 }
@@ -124,62 +125,68 @@ class Laser {
     }
 }
 class EnemyShip {
-    constructor(params) {
-        this.name = '';
+    constructor(xPos, yPos, xVel, yVel) {
+        this.id = '';
         this.xVel = 0;
         this.yVel = 0;
         this.sprite = enemyShipIMG;
-        enemyShipIMG.onload = ()=> { // update based on loading of game or start, if dependant on global variable are  drop here
-            this.width = userVariables.enemyTileWidth * enemyScale;
-            this.height = userVariables.enemyTileHeight * enemyScale;
-            this.xPos = (canvas.width/2) - (this.width/2); // can't call position directly so we need to save it as an object because it takes multiple values
-            this.yPos = (canvas.height / 2) + (this.height);
-        }
+        this.xPos = xPos;
+        this.yPos = yPos;
+        // enemyShipIMG.onload = ()=> { 
+            this.width = usVarClac.enemyAdjustedDim;
+            this.height = usVarClac.enemyAdjustedDim;
+        // }
     }
     draw() {
         if (this.sprite){
             ctx.drawImage(this.sprite, this.xPos, this.yPos, this.width, this.height);
         }
     }
-    update(){
+    update(xVel, yVel){
         draw();
-        this.xPos += this.xVel;
-        this.yPos += this.yVel;
-        this.xMiddle = (this.xPos + (this.width / 2)); // middle needs to be updated per current pos, so it goes in update()
-        this.yMiddle = (this.yPos + (this.height / 2)); // it can go in draw, but that goes against gameloop logic
+        this.xPos += xVel;
+        this.yPos += yVel;
+        // this.xMiddle = (this.xPos + (this.width / 2)); // middle needs to be updated per current pos, so it goes in update()
+        // this.yMiddle = (this.yPos + (this.height / 2)); // it can go in draw, but that goes against gameloop logic
     }
 }
 class EnemyGenerator { // this could have been just an array but with a class we can access more properties dynamically
     // position, velocity, fleet array, 
-    constructor(xPos, yPos, xVel, yVel) {
-        // window.onload = ()=> { // shouldn't need onload b/c its being called by
-            this.xVel = 0;
-            this.yVel = 0;
-            this.xPos = 0;
-            this.yPos = 0;
-            this.rows = 5; // make dynamic later | enemyRows
-            this.columns = 1; // make dynamic later | enemyColumns
-            this.enemyFleet = [];// init new enemy here on each class init
-        
-        for(let i = 0; i < this.rows; i++){
-            this.enemyFleet.push(new EnemyShip());
-            this.enemyFleet[i].name += 'ship_' + i;
-
-            // enemyFleet[0] xyPos: 0, yPos: 0
-            // enemyFleet[1] xPos: width * 1, yPos 0
-            // second row enemyFleet[6] xPos: 0, yPos: height * 1
-            // second row enemyFleet[7] xPos: width * 1, yPos: height * 1
-            
-            // nested for loop for 2 rows? 
-            // another for loop of enemyFleet, number of rows * width, enemyFleet[i] postion
-            //position start middle of screen, number of rows * width, individual postion
-            console.log(this.enemyFleet[i]);
+    constructor(enemyRows, enemyColumns, name) { // xVel, yVel enemyRows, enemyColumns
+        this.name = name;
+        this.xVel = usVar.enemySpeed;
+        this.yVel = 0;
+        this.yJump = usVarClac.enemyAdjustedDim;
+        this.xPos = 0;
+        this.yPos = 0;
+        this.width = (usVarClac.enemyAdjustedDim + usVar.gap) * usVar.enemyRows,
+        this.enemyFleet = [];// init new enemy here on each class init
+        this.rows = enemyRows; // make dynamic later | enemyRows
+        this.columns = enemyColumns; // make dynamic later | enemyColumns
+        // window.onload = ()=> { 
+            for(let i = 0; i < this.rows; i++){
+                for (let j = 0; j < this.columns; j++) {
+                    this.enemyFleet.push(new EnemyShip(i * (usVarClac.enemyAdjustedDim + usVar.gap), j * (usVarClac.enemyAdjustedDim + usVar.gap)));
+                    // this.enemyFleet[i].id += i;
+                }
+            }
+            console.log(`  !!!!!! new enemy fleet:`);
+            console.dir(this.enemyFleet);
         // }
-    }
     }
     draw(){
     }
     update(){
+        this.xPos += this.xVel;
+        this.yVel = 0;
+
+        if ((this.xPos > 0) & ((this.xPos - usVar.gap) <= canvas.width - this.width)) { 
+
+        } else {
+            this.xVel = -this.xVel;
+            this.yVel = this.yJump;
+            usVar.enemySafeArea = false;
+        }
     }
 }
 
@@ -211,7 +218,7 @@ const keyDown = addEventListener('keydown', (evt) => {
         case ' ':
             // console.log('fire');
             keys.space.pressed = true;
-            laserArray.push(new Laser(player.xMiddle - (userVariables.projectileWidth * .5), player.yMiddle - (userVariables.projectileHeight), -6))
+            laserArray.push(new Laser(player.xMiddle - (usVar.projectileWidth * .5), player.yMiddle - (usVar.projectileHeight), -6))
             console.log(laserArray);
             break;
         default:
@@ -251,15 +258,14 @@ const player = new UserShip() // initialize the player after loading its image
 
 let laserIMG = new Image();
 laserIMG.src = 'images/Sprites/Laser_Spritelist_8x30.png';
-let laserArray = []
+
 
 let enemyShipIMG = new Image();
 enemyShipIMG.src = 'images/Sprites/EnemyShip_90x90.png';
 // const enemy = new EnemyShip() // test if enemyship loads.
 // we don't add an array here because it would only generate once, if we want a new round, it should be a class
 // enemyGrid[] > EnemyGenerator() > enemyFleet[] > EnemyShip{}
-const enemyGrid = [new EnemyGenerator()]; // create the first array of classes of arrays of enemies. containing each new instance of an enemy fleet
-
+// const array = makeArray(enemyColumns, enemyRows)
 
 const background = {
     draw(){
@@ -271,59 +277,78 @@ const background = {
 ////////////////////////////////////////////////////////////////////////
 // GLOBAL VARIABLES
 ////////////////////////
+
+let secondsPassed = 0;
+let oldTimeStamp = 0;
+let fps;
+
 // add all variables that will effect drawn objects first
-const playerScale = 1; // check class if comm out. Update depending on needs
-const enemyScale = .75; // check class if comm out. Update depending on needs
-const playerGameVelocity = 4; // check class if comm out. Global movement speed, redeclare per object as needed. 4 is a good number
 
-let difficulty = {
-    enemyRows : 5,
-    enemyColumns: 1,
-    enemyTotal: this.enemyRows * this.enemyColumns,
-    enemySpeed: 3, 
-    enemyFireRate: .2
-}
-
-const userVariables = {
+let usVar = {
+    playerScale : 1, 
+    enemyScale : .5, 
+    enemyRows : 5, // | STRETCH | add a random range to or above this
+    enemyColumns: 2, // | STRETCH | add a random range to or above this
+    gap: 20,
+    enemySpeed: 1, 
+    enemyFireRate: .2,
+    playerGameVelocity : 4, // check class if comm out. Global movement speed, redeclare per object as needed. 4 is a good number
+    // enemyTotal: this.enemyRows * this.enemyColumns,
+    // --- below elements do not change ---
+    safeArea : true,
+    enemySafeArea: true,
     shipTileWidth : 192,
     shipTileHeight : 192,
     enemyTileWidth : 90,
     enemyTileHeight : 90,
+    enemyDim: 90,
     projectileWidth : 8,
     projectileHeight : 30,
-    safeArea : true,
-    // Define the number of columns and rows in the sprite
+    // Sprite Sheet | Define the number of columns and rows in the sprite
     numColumns : 9,
     numRows : 8,
     // Define the size of a frame
     frameWidth : this.shipTileWidth / this.numColumns,
     frameHeight : this.shipTileHeight / this.numRows,
     // The sprite image frame starts from 0
-    currentFrame : 0
+    gameFrame : 0,
+    userSpriteFrame: 0,
 }
+let usVarClac = { // JS doesn't like using .this with an init object so we need another object for calculating dynamic things
+    enemyAdjustedDim: usVar.enemyDim * usVar.enemyScale,
+    canvasCenter : canvas.width / 2,
+}
+console.log(`enemy size: ${usVarClac.enemyAdjustedDim}`)
+console.log(`canvas center: ${usVarClac.canvasCenter}`);
+console.log(`play speed: ${usVar.playerGameVelocity}`);
+////////////////////////////////////////////////////////////////////////
+// CATCH ARRAYS
+////////////////////////
 
+let laserArray = []
+
+// create the first array of classes of arrays of enemies. containing each new instance of an enemy fleet
+let enemyGrid = [new EnemyGenerator(usVar.enemyRows, usVar.enemyColumns, 'one')]; 
 
 
 // variables needed to set FPS
 // we do not need to define timeStamp as is is a protected word
-let secondsPassed = 0;
-let oldTimeStamp = 0;
-let fps;
+
 
 ////////////////////////////////////////////////////////////////////////
 // FUNCTIONS
 ////////////////////////
-function makeArray(columns, rows) {
-    let newArray = []
-    for (let i = 0; i < rows; i++) {
-        newArray[i] = [];
-        for (let j = 0; j < columns; j++) {
-            newArray[i][j] = [];
-          }
-    }
-    return newArray;
-}
-const array = makeArray(enemyColumns, enemyRows)
+// function makeArray(columns, rows) {
+//     let newArray = []
+//     for (let i = 0; i < rows; i++) {
+//         newArray[i] = [];
+//         for (let j = 0; j < columns; j++) {
+//             newArray[i][j] = [];
+//           }
+//     }
+//     return newArray;
+// }
+
 
 function gameLoop(timeStamp){ // Set up flow of functions 
     // console.log('game loop started')
@@ -333,7 +358,7 @@ function gameLoop(timeStamp){ // Set up flow of functions
     ///////////////////////////
     // init > gameloop [ calcs, update > draw > gameloop ]
     ///////////////////////////
-
+    
     update(secondsPassed); // Make changes to the properties
     draw(); // Perform the drawing operations
     window.requestAnimationFrame(gameLoop); // The loop function has reached it's end. Keep requesting new frames
@@ -349,37 +374,40 @@ function draw(){ // Always need to draw the object first | make it available for
 
     // move down the chain of updates till we reach individual EnemyShip
     // enemyGrid[] > EnemyGenerator() > enemyFleet[] > EnemyShip{} 
-    enemyGrid.forEach(generator => {  // grid []
-        // generator.update(); // class generator{[]}
+    enemyGrid.forEach(generator => {
+        generator.draw(); // class generator{[]}
         generator.enemyFleet.forEach(ship => {
             ship.draw();
         });
     });
+    
 }   
 
 function update(secondsPassed) { // Animation - final decision on how a change is made here
     // console.log(`update started`);
+    
     player.borderCheck();
     player.update();
     // enemy.update();
     
     // Player movement | if all are true
-    if (keys.a.pressed && userVariables.safeArea && !keys.d.pressed){ // a is pressed and inside safeArea
-        player.xVel = -playerGameVelocity; // b/c of update(), position = velocity and xVel is 0 until now, -4 (left)
+    if (keys.a.pressed && usVar.safeArea && !keys.d.pressed){ // a is pressed and inside safeArea
+        player.xVel = -usVar.playerGameVelocity; // b/c of update(), position = velocity and xVel is 0 until now, -4 (left)
         // **STRETCH** update sprite clipping for fame animation
-    } else if (keys.d.pressed && userVariables.safeArea && !keys.a.pressed){
-        player.xVel = playerGameVelocity;  // b/c of update(), position = velocity and xVel is 0 until now, 4 (left)
+    } else if (keys.d.pressed && usVar.safeArea && !keys.a.pressed){
+        player.xVel = usVar.playerGameVelocity;  // b/c of update(), position = velocity and xVel is 0 until now, 4 (left)
         // **STRETCH** update sprite clipping for fame animation
     } else if (keys.space.pressed){
         // do something to fire
         // when laser update is placed here we get a continuous shot of lasers on each frame.
-        // laserArray.push(new Laser(player.xMiddle - (userVariables.projectileWidth * .5), player.yMiddle - (userVariables.projectileHeight), -6))
+        // laserArray.push(new Laser(player.xMiddle - (usVar.projectileWidth * .5), player.yMiddle - (usVar.projectileHeight), -6))
         // console.log(laserArray);
     } else {
         player.xVel = 0;
         // set sprite clip back to 0
     }
     
+
     // Track each laser
     laserArray.forEach((value) => { // update each laser's properties
         value.update();
@@ -387,13 +415,30 @@ function update(secondsPassed) { // Animation - final decision on how a change i
             laserArray.shift();
         }
     })
-    
+
+    // console.log(enemyGrid[0]);
     // move down the chain of updates till we reach individual EnemyShip
     // enemyGrid[] > EnemyGenerator() > enemyFleet[] > EnemyShip{} 
     enemyGrid.forEach(generator => {
         generator.update(); // class generator{[]}
         generator.enemyFleet.forEach(ship => {
-            ship.update();
+            ship.update(generator.xVel, generator.yVel); // change to generator.xVel | you can target generators's elements with placeholder!
         });
     });
+    if (enemyGrid.length > 3){ // remove the first class generator when we get too high to cut down on memory
+        console.log(`>>>>>> killing a generator`);
+        enemyGrid.shift();
+    }
+
+    // measure game time to make new enemies
+    usVar.gameFrame++
+    // console.log(usVar.gameFrame);
+    // we want to spawn a new fleet every 3500 frames
+    if (usVar.gameFrame % 3500 === 0){ // |STRETCH| setup a random range and interval
+        console.log(`reach 3500`);
+        enemyGrid.push(new EnemyGenerator(usVar.enemyRows, usVar.enemyColumns));
+        // console.log(enemyGrid);
+    }
+// console.log(enemyGrid);
+    
 }
