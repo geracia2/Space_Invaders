@@ -444,11 +444,10 @@ function update(secondsPassed) { // Animation - final decision on how a change i
             // check for collision with laser
             laserArray.forEach((laser, j) => { 
                 // console.log(laser[j])
-                if (
-                       laser.yPos <= (ship.yPos + ship.height) // las top < to Enm bottom === hit
-                    && (laser.yPos - laser.height) >= ship.yPos // las bottom > above Enm top == hit
-                    && laser.xPos >= ship.xPos
-                    && (laser.xPos + laser.width) <= (ship.xPos + ship.width)
+                if ( laser.yPos <= (ship.yPos + ship.height) // las top < to ship bottom === hit
+                    && (laser.yPos - laser.height) >= ship.yPos // las bottom > above ship top == hit
+                    && laser.xPos >= ship.xPos // las left beyond ship left === hit
+                    && (laser.xPos + laser.width) <= (ship.xPos + ship.width) // las right before ship right === hit
                     ){ 
                     // console.log(`hit`);
                     setTimeout(() => {
