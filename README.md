@@ -1,4 +1,5 @@
 # Space Invaders 
+https://geracia2.github.io/Space_Invaders/
 
 **This is my first project in Software Engineering!**
 
@@ -94,14 +95,23 @@ _italics are stretch goals_
 - JS + CSS : game board/canvas size
 - JS : Game loop via recursive function
     - Initialize > Game Loop [ Update > Draw > Game Loop]
-- JS + CSS : Create userShip Object
+- JS : Create userShip Class
+    - draw on: load
+    - update on: every frame + key press updates position
 - JS : addEventListeners on canvas for key inputs
-- JS : userShip's Method for moving
-- JS : Move the ship
-- JS : userShip's Method for shooting
-- JS : Create projectiles
+- JS : Create Laser class
+    - draw on: key press
+    - update on: every frame + userShip position
+- JS : Create LasersArray and generate new Lasers on input
 - JS : Create an Aliens Class 
-- JS : Generate AlienFleet class with array **currently on**
+- JS : Create an AlienFleet class 
+    - enemyGrid[] > EnemyGenerator() > enemyFleet[] > enemyShip{} **| Currently doing |**
+        - draw on: load
+        - update on: every frame
+    - need an array to hold and push into
+    - loop to generate # of enemies
+        - if statements for rows and columns
+    - loop to update individual enemies
 - JS : Move rows of Aliens
 - JS : Spawn rows on an interval
 - JS : Aliens collision method
