@@ -87,6 +87,10 @@ class UserShip {
             this.xMiddle = (this.xPos + (this.width / 2));
             this.yMiddle = (this.yPos + (this.height / 2));
             // console.log (this.middle)
+            this.colLeft = this.xPos;
+            this.colTop = this.xPos
+            this.colRight = this.xPos + this.width;
+            this.colBottom = this.xPos + this.height
         }
     }
     borderCheck() {
@@ -106,8 +110,8 @@ class Laser {
             this.yVel = yVel;
             this.xPos = xPos;
             this.yPos = yPos;
-            this.width = 8;
-            this.height = 30;
+            this.width = usVar.projectileWidth;
+            this.height = usVar.projectileHeight;
             this.sprite = laserIMG;
         // }
     }
@@ -121,6 +125,10 @@ class Laser {
             draw();
             this.xPos += this.xVel;
             this.yPos += this.yVel;
+            this.colLeft = this.xPos;
+            this.colRight = this.xPos + this.width
+            this.colTop = this.xPos
+
         // }
     }
 }
@@ -146,8 +154,12 @@ class EnemyShip {
         draw();
         this.xPos += xVel;
         this.yPos += yVel;
-        // this.xMiddle = (this.xPos + (this.width / 2)); // middle needs to be updated per current pos, so it goes in update()
-        // this.yMiddle = (this.yPos + (this.height / 2)); // it can go in draw, but that goes against gameloop logic
+        this.xMiddle = (this.xPos + (this.width / 2)); // middle needs to be updated per current pos, so it goes in update()
+        this.yMiddle = (this.yPos + (this.height / 2)); // it can go in draw, but that goes against gameloop logic
+        this.colLeft = this.xPos;
+        this.colRight = this.xPos + this.width;
+        this.colBottom = this.xPos + this.height
+        this.colTop = this.xPos
     }
 }
 class EnemyGenerator { // this could have been just an array but with a class we can access more properties dynamically
@@ -317,6 +329,12 @@ let usVar = {
 let usVarClac = { // JS doesn't like using .this with an init object so we need another object for calculating dynamic things
     enemyAdjustedDim: usVar.enemyDim * usVar.enemyScale,
     canvasCenter : canvas.width / 2,
+//     laserColLeft : laser,
+//     laserColRight : ,
+//     enemyColLeft : ,
+//     enemyColRight : ,
+//     playerColLeft : ,
+//     playerColRight : ,
 }
 console.log(`enemy size: ${usVarClac.enemyAdjustedDim}`)
 console.log(`canvas center: ${usVarClac.canvasCenter}`);
@@ -421,10 +439,25 @@ function update(secondsPassed) { // Animation - final decision on how a change i
     // enemyGrid[] > EnemyGenerator() > enemyFleet[] > EnemyShip{} 
     enemyGrid.forEach(generator => {
         generator.update(); // class generator{[]}
-        generator.enemyFleet.forEach(ship => {
-            ship.update(generator.xVel, generator.yVel); // change to generator.xVel | you can target generators's elements with placeholder!
+        generator.enemyFleet.forEach((ship, i) => {
+            ship.update(generator.xVel, generator.yVel); // you can target generators's elements with placeholder!
+            // check for collision with laser
+            laserArray.forEach((laser, j) => { 
+                console.log(laser[j])
+                if (laser.colTop <= ship.colBottom 
+                    // && laser.colLeft <= ship.colLeft 
+                    // && laser.colRight <= ship.colRight
+                    ){ 
+                    // console.log(`hit`);
+                    setTimeout(() => {
+                        generator.enemyFleet.splice(i, 1)
+                        laserArray.splice(j, 1)
+                    }, 0);
+                }
+            })
         });
     });
+
     if (enemyGrid.length > 3){ // remove the first class generator when we get too high to cut down on memory
         console.log(`>>>>>> killing a generator`);
         enemyGrid.shift();
