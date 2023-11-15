@@ -60,8 +60,8 @@ class UserShip {
             this.width = usVar.shipTileWidth * usVar.playerScale;
             this.height = usVar.shipTileHeight * usVar.playerScale;
             // can't call position directly so we need to save it as an object because it takes multiple values
-            this.xPos = (canvas.width/2) - (this.width/2); 
-            this.yPos = (canvas.height / 2) + (this.height);
+            this.xPos = (canvas.width / 2) - (this.width / 2); 
+            this.yPos = (canvas.height / 2) + this.height;
 
         }
     }
@@ -71,8 +71,8 @@ class UserShip {
             // console.log(`player class draw`);
             // ctx.fillStyle = "blue";
             // ctx.fillRect(this.xPos, this.yPos, 192, 192)
-            // ctx.fillStyle = "green";
-            // ctx.fillRect(this.xPos + 64, this.yPos + 44, 64, 109)
+            ctx.fillStyle = "green";
+            ctx.fillRect(this.xPos + 64, this.yPos + 44, 64, 109)
             // ctx.drawImage(this.sprite, this.xPos, this.yPos, this.width, this.height )
             ctx.drawImage(this.sprite, 0, 0, 192, 192, this.xPos, this.yPos, this.width, this.height) // frame 3,1
             // context.drawImage(img, startCropX, startCropY, endXCropAfter, endYCropAfter, x, y, width,height)
@@ -86,11 +86,10 @@ class UserShip {
             this.xPos += this.xVel;
             this.xMiddle = (this.xPos + (this.width / 2));
             this.yMiddle = (this.yPos + (this.height / 2));
-            // console.log (this.middle)
-            // this.colLeft = this.xPos;
-            // this.colTop = this.xPos
-            // this.colRight = this.xPos + this.width;
-            // this.colBottom = this.xPos + this.height
+            this.xColLeft = this.xPos + usVar.playColSidesDif; // x, go right
+            this.xColRight = this.xPos + (this.width - usVar.playColSidesDif); // x go right + width then back
+            this.yColTop = this.yPos + usVar.playColTopBotDif // y, go down
+            this.yColBottom = this.yPos + (this.height - usVar.playColTopBotDif)
         }
     }
     borderCheck() {
@@ -232,10 +231,10 @@ class EnemyLaser {
             this.draw();
             this.xPos += this.xVel;
             this.yPos += this.yVel;
-            // this.colLeft = this.xPos;
-            // this.colRight = this.xPos + this.width
-            // this.colTop = this.xPos
-
+            this.xColLeft = this.xPos; // x, go right
+            this.xColRight = this.xPos + this.width; // x go right + width then back
+            this.yColTop = this.yPos; // y, go down
+            this.yColBottom = this.yPos + this.height;
         // }
     }
 }
@@ -339,17 +338,19 @@ let usVar = {
     // --- below elements will be changeable ---
     playerScale : 1, 
     enemyScale : .5,
-    enemyRows : 5, // | STRETCH | add a random range to or above this
+    enemyRows : 3, // | STRETCH | add a random range to or above this
     enemyColumns: 2, // | STRETCH | add a random range to or above this
     gap: 20,
-    enemySpeed: 1, 
-    enemyFireRate: 50, // highly dependant to frame rate
+    enemySpeed: .75, 
+    enemyFireRate: 200, // Lower is faster highly dependant to frame rate
     enemySpawnRate: 500, // 3500 default, 500 test | STRETCH | difficulty settings
     playerGameVelocity : 4, // check class if comm out. Global movement speed, redeclare per object as needed. 4 is a good number
     // enemyTotal: this.enemyRows * this.enemyColumns,
     // --- below elements do not change ---
     safeArea : true, 
     enemySafeArea: true,
+    playColSidesDif: 64,
+    playColTopBotDif: 44,
     shipTileWidth : 192,
     shipTileHeight : 192,
     enemyTileWidth : 90,
@@ -488,25 +489,43 @@ function update(secondsPassed) { // Animation - final decision on how a change i
     //     }
     // })
     
-    enemyLaserArray.forEach((laser, i) => {
-        laser.update();
+    enemyLaserArray.forEach((enemyLaser, i) => {
+        if (enemyLaser.yPos >= (canvas.height + 10)){ // remove lasers when there are too many
+            enemyLaserArray.shift();
+        } else {
+            enemyLaser.update();
+        }
+        // check for collision with ship
+        // HIT DETECTION 
+        // Basically draw a box top to bottom, left to right, if in = hit
+        if (enemyLaser.yColBottom >= player.yColTop
+         && enemyLaser.yColTop    <= player.yColBottom
+         && enemyLaser.xColRight  >= player.xColLeft
+         && enemyLaser.xColLeft   <= player.xColRight
+        ){
+            console.log(`*** Yo've Been Hit`);
+        }
     })
 
     // move down the chain of updates till we reach individual EnemyShip
     // enemyGrid[] > EnemyGenerator() > enemyFleet[] > EnemyShip{} 
     enemyGrid.forEach(generator => {
-        generator.update(); // class generator{[]}
         // Make enemies shoot back  checking frame rate & if there are enemies in fleet
         if (usVar.gameFrame % usVar.enemyFireRate === 0 && generator.enemyFleet.length > 0) {
             // pick a random ship by generator > Fleet index random > shoot()
             generator.enemyFleet[Math.floor(Math.random() * generator.enemyFleet.length)].shoot(enemyLaserArray)
+        } else {
+            generator.update(); // class generator{[]}
         }
+        // console.log(enemyLaserArray); // test if they are being removed
         generator.enemyFleet.forEach((ship, i) => {
             ship.update(generator.xVel, generator.yVel); // you can target generators's elements with placeholder!
             // check for collision with laser
             laserArray.forEach((laser, j) => { 
-                // console.log(laser[j])
-                if ( laser.yPos <= (ship.yPos + ship.height) // las top < to ship bottom === hit
+                
+                // HIT DETECTION 
+                // Basically draw a box top to bottom, left to right, if in = hit
+                if (laser.yPos <= (ship.yPos + ship.height) // las top < to ship bottom === hit
                 && (laser.yPos - laser.height) >= ship.yPos // las bottom > above ship top == hit
                 && laser.xPos >= ship.xPos // las left beyond ship left === hit
                 && (laser.xPos + laser.width) <= (ship.xPos + ship.width) // las right before ship right === hit
