@@ -101,6 +101,7 @@ _italics are stretch goals_
 - JS : addEventListeners on canvas for key inputs
 - JS : Create Laser class
     - draw on: key press
+    - .forEach loop on an array to constantly update and calculate
     - update on: every frame + userShip position
 - JS : Create LasersArray and generate new Lasers on input
 - JS : Create an Aliens Class 

@@ -122,7 +122,36 @@ class Laser {
     }
     update(){
         // if (this.sprite){
-            draw();
+            this.draw();
+            this.xPos += this.xVel;
+            this.yPos += this.yVel;
+            // this.colLeft = this.xPos;
+            // this.colRight = this.xPos + this.width
+            // this.colTop = this.xPos
+
+        // }
+    }
+}
+class EnemyLaser {
+    constructor(xPos, yPos, yVel) {
+        // laserIMG.onload = ()=> {
+            this.xVel = 0;
+            this.yVel = yVel;
+            this.xPos = xPos;
+            this.yPos = yPos;
+            this.width = usVar.enemyProjectileWidth;
+            this.height = usVar.enemyProjectileHeight;
+            this.sprite = enemyLaserIMG;
+        // }
+    }
+    draw(){
+        // if (this.sprite){
+            ctx.drawImage(this.sprite, this.xPos, this.yPos, this.width, this.height);
+        // }
+    }
+    update(){
+        // if (this.sprite){
+            this.draw();
             this.xPos += this.xVel;
             this.yPos += this.yVel;
             // this.colLeft = this.xPos;
@@ -151,15 +180,19 @@ class EnemyShip {
         }
     }
     update(xVel, yVel){
-        draw();
+        this.draw();
         this.xPos += xVel;
         this.yPos += yVel;
         this.xMiddle = (this.xPos + (this.width / 2)); // middle needs to be updated per current pos, so it goes in update()
         this.yMiddle = (this.yPos + (this.height / 2)); // it can go in draw, but that goes against gameloop logic
+        this.yBottom =  this.yPos + this.height;
         // this.colLeft = this.xPos;
         // this.colTopRight = this.xPos + this.width;
         // this.colBottomRight = this.xPos + this.height
         // this.colTop = this.xPos
+    }
+    shoot(enemyLaser){
+        enemyLaserArray.push(new EnemyLaser(this.xMiddle, this.yBottom, REPLACE.yVel ))
     }
 }
 class EnemyGenerator { // this could have been just an array but with a class we can access more properties dynamically
@@ -271,6 +304,9 @@ const player = new UserShip() // initialize the player after loading its image
 let laserIMG = new Image();
 laserIMG.src = 'images/Sprites/Laser_Spritelist_8x30.png';
 
+let enemyLaserIMG = new Image();
+enemyLaserIMG.src = 'images/Sprites/Enemy_Laser_8x20.png';
+
 
 let enemyShipIMG = new Image();
 enemyShipIMG.src = 'images/Sprites/EnemyShip_90x90.png';
@@ -316,6 +352,8 @@ let usVar = {
     enemyDim: 90,
     projectileWidth : 8,
     projectileHeight : 30,
+    enemyProjectileWidth: 8,
+    enemyProjectileHeight: 20,
     // Sprite Sheet | Define the number of columns and rows in the sprite
     numColumns : 9,
     numRows : 8,
@@ -343,7 +381,8 @@ console.log(`play speed: ${usVar.playerGameVelocity}`);
 // CATCH ARRAYS
 ////////////////////////
 
-let laserArray = []
+let laserArray = [];
+let enemyLaserArray = []
 
 // create the first array of classes of arrays of enemies. containing each new instance of an enemy fleet
 let enemyGrid = [new EnemyGenerator(usVar.enemyRows, usVar.enemyColumns, 'one')]; 
@@ -388,8 +427,9 @@ function draw(){ // Always need to draw the object first | make it available for
     // organize layers by bottom on top of list
     background.draw(); // init first draw
     laserArray.forEach((value) => {value.draw()}) // init first draw per array value 
+    enemyLaserArray.forEach((value) => {value.draw()}) // init first draw per array value 
     player.draw(); // init first draw
-
+    
     // move down the chain of updates till we reach individual EnemyShip
     // enemyGrid[] > EnemyGenerator() > enemyFleet[] > EnemyShip{} 
     enemyGrid.forEach(generator => {
@@ -398,6 +438,7 @@ function draw(){ // Always need to draw the object first | make it available for
             ship.draw();
         });
     });
+    
     
 }   
 
@@ -427,12 +468,26 @@ function update(secondsPassed) { // Animation - final decision on how a change i
     
 
     // Track each laser
-    laserArray.forEach((value) => { // update each laser's properties
-        value.update();
-        if (laserArray.length > 30){ // remove lasers when there are too many
+    laserArray.forEach((laser) => { // update each laser's properties
+        laser.update();
+        if (laser.yPos <= -30){ // remove lasers when there are too many
             laserArray.shift();
         }
     })
+    enemyLaserArray.forEach((value) => { // update each laser's properties
+        value.update();
+        // if (laserArray.length > 30){ // remove lasers when there are too many
+        //     laserArray.shift();
+        // }
+    })
+    // laserArray.forEach((value) => { // old clean up took too long
+    //     value.update();
+    //     if (laserArray.length > 30){ // remove lasers when there are too many
+    //         laserArray.shift();
+    //     }
+    // })
+
+
 
     // console.log(enemyGrid[0]);
     // move down the chain of updates till we reach individual EnemyShip
