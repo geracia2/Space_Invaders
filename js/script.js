@@ -75,7 +75,7 @@ class UserShip {
             // ctx.fillRect(this.xPos + 64, this.yPos + 44, 64, 109)
             // ctx.drawImage(this.sprite, this.xPos, this.yPos, this.width, this.height )
             ctx.drawImage(this.sprite, 0, 0, 192, 192, this.xPos, this.yPos, this.width, this.height) // frame 3,1
-            // // context.drawImage(img, startCropX, startCropY, endXCropAfter, endYCropAfter, x, y, width,height)
+            // context.drawImage(img, startCropX, startCropY, endXCropAfter, endYCropAfter, x, y, width,height)
         }
     }
     update(){
@@ -103,64 +103,7 @@ class UserShip {
         }
     }  
 }
-class Laser {
-    constructor(xPos, yPos, yVel) {
-        // laserIMG.onload = ()=> {
-            this.xVel = 0;
-            this.yVel = yVel;
-            this.xPos = xPos;
-            this.yPos = yPos;
-            this.width = usVar.projectileWidth;
-            this.height = usVar.projectileHeight;
-            this.sprite = laserIMG;
-        // }
-    }
-    draw(){
-        // if (this.sprite){
-            ctx.drawImage(this.sprite, this.xPos, this.yPos, this.width, this.height);
-        // }
-    }
-    update(){
-        // if (this.sprite){
-            this.draw();
-            this.xPos += this.xVel;
-            this.yPos += this.yVel;
-            // this.colLeft = this.xPos;
-            // this.colRight = this.xPos + this.width
-            // this.colTop = this.xPos
 
-        // }
-    }
-}
-class EnemyLaser {
-    constructor(xPos, yPos, yVel) {
-        // laserIMG.onload = ()=> {
-            this.xVel = 0;
-            this.yVel = yVel;
-            this.xPos = xPos;
-            this.yPos = yPos;
-            this.width = usVar.enemyProjectileWidth;
-            this.height = usVar.enemyProjectileHeight;
-            this.sprite = enemyLaserIMG;
-        // }
-    }
-    draw(){
-        // if (this.sprite){
-            ctx.drawImage(this.sprite, this.xPos, this.yPos, this.width, this.height);
-        // }
-    }
-    update(){
-        // if (this.sprite){
-            this.draw();
-            this.xPos += this.xVel;
-            this.yPos += this.yVel;
-            // this.colLeft = this.xPos;
-            // this.colRight = this.xPos + this.width
-            // this.colTop = this.xPos
-
-        // }
-    }
-}
 class EnemyShip {
     constructor(xPos, yPos, xVel, yVel) {
         this.id = '';
@@ -183,18 +126,20 @@ class EnemyShip {
         this.draw();
         this.xPos += xVel;
         this.yPos += yVel;
-        this.xMiddle = (this.xPos + (this.width / 2)); // middle needs to be updated per current pos, so it goes in update()
-        this.yMiddle = (this.yPos + (this.height / 2)); // it can go in draw, but that goes against gameloop logic
+        this.xMiddle = this.xPos + (this.width / 2); // middle needs to be updated per current pos, so it goes in update()
+        this.yMiddle = this.yPos + (this.height / 2); // it can go in draw, but that goes against gameloop logic
         this.yBottom =  this.yPos + this.height;
+        // this.yShooting = this.yBottom += usVar.enemyProjectileSpeed;
         // this.colLeft = this.xPos;
         // this.colTopRight = this.xPos + this.width;
         // this.colBottomRight = this.xPos + this.height
         // this.colTop = this.xPos
     }
-    shoot(enemyLaser){
-        enemyLaserArray.push(new EnemyLaser(this.xMiddle, this.yBottom, REPLACE.yVel ))
+    shoot(enemyLaserArray){
+        enemyLaserArray.push(new EnemyLaser(this.xMiddle, this.yBottom, usVar.enemyProjectileSpeed));
     }
 }
+
 class EnemyGenerator { // this could have been just an array but with a class we can access more properties dynamically
     // position, velocity, fleet array, 
     constructor(enemyRows, enemyColumns, name) { // xVel, yVel enemyRows, enemyColumns
@@ -235,7 +180,65 @@ class EnemyGenerator { // this could have been just an array but with a class we
     }
 }
 
+class Laser {
+    constructor(xPos, yPos, yVel) {
+        // laserIMG.onload = ()=> {
+            this.xVel = 0;
+            this.yVel = yVel;
+            this.xPos = xPos;
+            this.yPos = yPos;
+            this.width = usVar.projectileWidth;
+            this.height = usVar.projectileHeight;
+            this.sprite = laserIMG;
+        // }
+    }
+    draw(){
+        // if (this.sprite){
+            ctx.drawImage(this.sprite, this.xPos, this.yPos, this.width, this.height);
+        // }
+    }
+    update(){
+        // if (this.sprite){
+            this.draw();
+            this.xPos += this.xVel;
+            this.yPos += this.yVel;
+            // this.colLeft = this.xPos;
+            // this.colRight = this.xPos + this.width
+            // this.colTop = this.xPos
 
+        // }
+    }
+}
+
+class EnemyLaser {
+    constructor(xPos, yPos, yVel) {
+        // laserIMG.onload = ()=> {
+            this.xVel = 0;
+            this.yVel = yVel;
+            this.xPos = xPos;
+            this.yPos = yPos;
+            this.width = usVar.enemyProjectileWidth;
+            this.height = usVar.enemyProjectileHeight;
+            this.sprite = enemyLaserIMG;
+        // }
+    }
+    draw(){
+        // if (this.sprite){
+            ctx.drawImage(this.sprite, this.xPos, this.yPos, this.width, this.height);
+        // }
+    }
+    update(){
+        // if (this.sprite){
+            this.draw();
+            this.xPos += this.xVel;
+            this.yPos += this.yVel;
+            // this.colLeft = this.xPos;
+            // this.colRight = this.xPos + this.width
+            // this.colTop = this.xPos
+
+        // }
+    }
+}
 ////////////////////////////////////////////////////////////////////////
 // LISTENERS
 ////////////////////////
@@ -263,7 +266,7 @@ const keyDown = addEventListener('keydown', (evt) => {
         case ' ':
             // console.log('fire');
             keys.space.pressed = true;
-            laserArray.push(new Laser(player.xMiddle - (usVar.projectileWidth * .5), player.yMiddle - (usVar.projectileHeight), -6))
+            laserArray.push(new Laser(player.xMiddle - (usVar.projectileWidth / 2), (player.yMiddle - usVar.projectileHeight), -usVar.projectileSpeed))
             console.log(laserArray);
             break;
         default:
@@ -333,17 +336,19 @@ let fps;
 // add all variables that will effect drawn objects first
 
 let usVar = {
+    // --- below elements will be changeable ---
     playerScale : 1, 
-    enemyScale : .5, 
+    enemyScale : .5,
     enemyRows : 5, // | STRETCH | add a random range to or above this
     enemyColumns: 2, // | STRETCH | add a random range to or above this
     gap: 20,
     enemySpeed: 1, 
-    enemyFireRate: .2,
+    enemyFireRate: 50, // highly dependant to frame rate
+    enemySpawnRate: 500, // 3500 default, 500 test | STRETCH | difficulty settings
     playerGameVelocity : 4, // check class if comm out. Global movement speed, redeclare per object as needed. 4 is a good number
     // enemyTotal: this.enemyRows * this.enemyColumns,
     // --- below elements do not change ---
-    safeArea : true,
+    safeArea : true, 
     enemySafeArea: true,
     shipTileWidth : 192,
     shipTileHeight : 192,
@@ -352,14 +357,14 @@ let usVar = {
     enemyDim: 90,
     projectileWidth : 8,
     projectileHeight : 30,
+    projectileSpeed: 6,
     enemyProjectileWidth: 8,
     enemyProjectileHeight: 20,
+    enemyProjectileSpeed: 2,
     // Sprite Sheet | Define the number of columns and rows in the sprite
     numColumns : 9,
     numRows : 8,
     // Define the size of a frame
-    frameWidth : this.shipTileWidth / this.numColumns,
-    frameHeight : this.shipTileHeight / this.numRows,
     // The sprite image frame starts from 0
     gameFrame : 0,
     userSpriteFrame: 0,
@@ -367,12 +372,14 @@ let usVar = {
 let usVarClac = { // JS doesn't like using .this with an init object so we need another object for calculating dynamic things
     enemyAdjustedDim: usVar.enemyDim * usVar.enemyScale,
     canvasCenter : canvas.width / 2,
-//     laserColLeft : laser,
-//     laserColRight : ,
-//     enemyColLeft : ,
-//     enemyColRight : ,
-//     playerColLeft : ,
-//     playerColRight : ,
+    // frameWidth : this.shipTileWidth / this.numColumns,
+    // frameHeight : this.shipTileHeight / this.numRows,
+    // laserColLeft : laser,
+    // laserColRight : ,
+    // enemyColLeft : ,
+    // enemyColRight : ,
+    // playerColLeft : ,
+    // playerColRight : ,
 }
 console.log(`enemy size: ${usVarClac.enemyAdjustedDim}`)
 console.log(`canvas center: ${usVarClac.canvasCenter}`);
@@ -395,6 +402,7 @@ let enemyGrid = [new EnemyGenerator(usVar.enemyRows, usVar.enemyColumns, 'one')]
 ////////////////////////////////////////////////////////////////////////
 // FUNCTIONS
 ////////////////////////
+
 // function makeArray(columns, rows) {
 //     let newArray = []
 //     for (let i = 0; i < rows; i++) {
@@ -405,7 +413,6 @@ let enemyGrid = [new EnemyGenerator(usVar.enemyRows, usVar.enemyColumns, 'one')]
 //     }
 //     return newArray;
 // }
-
 
 function gameLoop(timeStamp){ // Set up flow of functions 
     // console.log('game loop started')
@@ -474,36 +481,36 @@ function update(secondsPassed) { // Animation - final decision on how a change i
             laserArray.shift();
         }
     })
-    enemyLaserArray.forEach((value) => { // update each laser's properties
-        value.update();
-        // if (laserArray.length > 30){ // remove lasers when there are too many
-        //     laserArray.shift();
-        // }
-    })
     // laserArray.forEach((value) => { // old clean up took too long
     //     value.update();
     //     if (laserArray.length > 30){ // remove lasers when there are too many
     //         laserArray.shift();
     //     }
     // })
+    
+    enemyLaserArray.forEach((laser, i) => {
+        laser.update();
+    })
 
-
-
-    // console.log(enemyGrid[0]);
     // move down the chain of updates till we reach individual EnemyShip
     // enemyGrid[] > EnemyGenerator() > enemyFleet[] > EnemyShip{} 
     enemyGrid.forEach(generator => {
         generator.update(); // class generator{[]}
+        // Make enemies shoot back  checking frame rate & if there are enemies in fleet
+        if (usVar.gameFrame % usVar.enemyFireRate === 0 && generator.enemyFleet.length > 0) {
+            // pick a random ship by generator > Fleet index random > shoot()
+            generator.enemyFleet[Math.floor(Math.random() * generator.enemyFleet.length)].shoot(enemyLaserArray)
+        }
         generator.enemyFleet.forEach((ship, i) => {
             ship.update(generator.xVel, generator.yVel); // you can target generators's elements with placeholder!
             // check for collision with laser
             laserArray.forEach((laser, j) => { 
                 // console.log(laser[j])
                 if ( laser.yPos <= (ship.yPos + ship.height) // las top < to ship bottom === hit
-                    && (laser.yPos - laser.height) >= ship.yPos // las bottom > above ship top == hit
-                    && laser.xPos >= ship.xPos // las left beyond ship left === hit
-                    && (laser.xPos + laser.width) <= (ship.xPos + ship.width) // las right before ship right === hit
-                    ){ 
+                && (laser.yPos - laser.height) >= ship.yPos // las bottom > above ship top == hit
+                && laser.xPos >= ship.xPos // las left beyond ship left === hit
+                && (laser.xPos + laser.width) <= (ship.xPos + ship.width) // las right before ship right === hit
+                ){ 
                     // console.log(`hit`);
                     setTimeout(() => {
                         generator.enemyFleet.splice(i, 1)
@@ -513,6 +520,7 @@ function update(secondsPassed) { // Animation - final decision on how a change i
             })
         });
     });
+    // console.log(enemyGrid[0]);
 
     if (enemyGrid.length > 10){ // remove the first class generator when we get too high to cut down on memory
         console.log(`>>>>>> killing a generator`);
@@ -522,12 +530,12 @@ function update(secondsPassed) { // Animation - final decision on how a change i
     // measure game time to make new enemies
     usVar.gameFrame++
     // console.log(usVar.gameFrame);
-    // we want to spawn a new fleet every 3500 frames
-    if (usVar.gameFrame % 500 === 0){ // |STRETCH| setup a random range and interval
+
+    // Spawn a new fleet every 3500 frames
+    if (usVar.gameFrame % usVar.enemySpawnRate === 0){ // |STRETCH| setup a random range and interval
         console.log(`reach 3500`);
         enemyGrid.push(new EnemyGenerator(usVar.enemyRows, usVar.enemyColumns));
         // console.log(enemyGrid);
     }
-// console.log(enemyGrid);
     
 }
