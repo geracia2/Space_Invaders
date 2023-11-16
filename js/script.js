@@ -246,8 +246,8 @@ class Explosion {
             this.frame = 1
             this.width = usVar.explosionTile;
             this.height = usVar.explosionTile; // 300
-            // this.yCropStart = 0;// usVar.explosionTile * (usVar.explosionFrame - 1)
-            this.yCropStart = 150;// usVar.explosionTile * (usVar.explosionFrame - 1)
+            this.yCropStart = 0;// usVar.explosionTile * (usVar.explosionFrame - 1)
+            // this.yCropStart = 150;// usVar.explosionTile * (usVar.explosionFrame - 1)
             this.yCropEnd = usVar.explosionTile; // usVar.explosionTile * usVar.explosionFrame
             this.xCropEndAfter = usVar.explosionTile;
             this.sprite = explosionIMG;
@@ -274,10 +274,12 @@ class Explosion {
     }
     update(){
             this.draw();
-            // this.yCropStart += usVar.explosionTile
-            this.width += .1;
-            this.height += .1;
-            this.opacity -= .01 
+            setTimeout(() => {
+                this.yCropStart = this.frame * usVar.explosionTile
+                this.width += .1;
+                this.height += .1;
+                this.opacity -= .01 
+            }, 10);
             
 
 
@@ -465,6 +467,17 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
+// Game over Alert
+function message() {
+    let text = "Game over!\nClick OK to restart or Cancel to quit.";
+    if (confirm(text) == true) {
+      // do something
+    } else {
+      // do something
+    }
+    // document.getElementById("demo").innerHTML = text;
+  }
+
 // function makeArray(columns, rows) {
 //     let newArray = []
 //     for (let i = 0; i < rows; i++) {
@@ -543,12 +556,14 @@ function update(secondsPassed) { // Animation - final decision on how a change i
     
     explosionArray.forEach((explosion, i) => {
         explosion.update()
-        explosion.frame++
-        // if (explosion.frame >= 7){
-        //     setTimeout(() => {
-        //         explosionArray.splice(i, 1)
-        //     }, 0);
-        // }
+        setTimeout(() => {
+            explosion.frame++
+        }, 100);
+        if (explosion.frame >= 7){
+            // setTimeout(() => {
+                explosionArray.splice(i, 1)
+            // }, 0);
+        }
         if (explosion.opacity <= 0){
             // setTimeout(() => {
                 explosionArray.splice(i, 1)
@@ -586,9 +601,14 @@ function update(secondsPassed) { // Animation - final decision on how a change i
          && enemyLaser.xColRight  >= player.xColLeft
          && enemyLaser.xColLeft   <= player.xColRight
         ){
+            // setTimeout(() => {
+                enemyLaserArray.splice(i, 1)
+            // }, 0);
             // console.log(`*** Yo've Been Hit ***`);
             explosionArray.push(new Explosion(player.xColLeft+5, player.yColTop+20))
-            player = {}
+            setTimeout(() => {
+                message();
+            }, 150);
         }
     })
 
@@ -634,7 +654,7 @@ function update(secondsPassed) { // Animation - final decision on how a change i
     });
     // console.log(enemyGrid[0]);
 
-    if (enemyGrid.length > 10){ // remove the first class generator when we get too high to cut down on memory
+    if (enemyGrid.length > 11){ // remove the first class generator when we get too high to cut down on memory
         console.log(`>>>>>> killing a generator`);
         enemyGrid.shift();
     }
