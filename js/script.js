@@ -21,7 +21,9 @@ function init(){
     canvas.width = 1280; // Dynamically would involve a function and window.height
     canvas.height = 720; // This could also be do with canvas.width = window.innerWidth;
     ctx = canvas.getContext('2d'); // establish Context language '2d'
+    const scoreElm = document.querySelector('#scoreElm')
     
+
     /*
     // Don't currently need a resize feature if its always this dim. but here it is.
     const canvasMaxWidth = 1280;
@@ -367,12 +369,25 @@ enemyShipIMG.src = 'images/Sprites/EnemyShip_90x90.png';
 // enemyGrid[] > EnemyGenerator() > enemyFleet[] > EnemyShip{}
 // const array = makeArray(enemyColumns, enemyRows)
 
+let backgroundIMG = new Image();
+backgroundIMG.src = 'images/Sprites/starBG_1280x1440.jpg';
+
 const background = {
+    yPos: 720,
     draw(){
-        ctx.fillStyle = 'black',
-        ctx.fillRect(0, 0, canvas.width, canvas.height)
+        ctx.drawImage(backgroundIMG, 0, this.yPos, 1280, 720, 0, 0, 1280, 720)
+        // ctx.fillStyle = 'black',
+        // ctx.fillRect(0, 0, canvas.width, canvas.height)
+    }, 
+    update(){
+        this.yPos--;
+        console.log(this.yPos)
+        if (this.yPos <= 0 ){
+            this.yPos = 720
+        }
     }
 }
+
 
 ////////////////////////////////////////////////////////////////////////
 // GLOBAL VARIABLES
@@ -397,6 +412,9 @@ let usVar = {
     playerGameVelocity : 6, // check class if comm out. Global movement speed, redeclare per object as needed. 4 is a good number
     projectileSpeed: 10,
     enemyProjectileSpeed: 4,
+    winScore: 1000,
+    enemyPointWorth: 10,
+    currentScore: 0,
     // enemyTotal: this.enemyRows * this.enemyColumns,
     // --- below elements do not change ---
     safeArea : true, 
@@ -500,7 +518,7 @@ function gameLoop(){ // Set up flow of functions
         ///////////////////////////
         // init > gameloop [ calcs, update > draw > gameloop ]
         ///////////////////////////
-        
+        scoreElm.innerHTML = usVar.currentScore;
         update(secondsPassed); // Make changes to the properties
         draw(); // Perform the drawing operations
         window.requestAnimationFrame(gameLoop); // The loop function has reached it's end. Keep requesting new frames
@@ -538,7 +556,8 @@ function draw(){ // Always need to draw the object first | make it available for
 function update(secondsPassed) { // Animation - final decision on how a change is made here
     setTimeout(() => {
     // console.log(`update started`);
-    
+    background.update()
+
     player.borderCheck();
 
     player.update();
@@ -647,6 +666,7 @@ function update(secondsPassed) { // Animation - final decision on how a change i
                 ){ 
                     // EXPLOSION ON ENEMY 
                     // console.log(`ship x: ${ship.xMiddle}, ship y: ${ship.yMiddle}`)
+                    usVar.currentScore += usVar.enemyPointWorth;
                     explosionArray.push(new Explosion(ship.xPos, ship.yPos))
                     
                     // console.dir(explosionArray)

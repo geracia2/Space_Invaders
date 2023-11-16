@@ -119,10 +119,10 @@ _italics are stretch goals_
 - JS : Spawn rows on an interval
 - JS : Aliens collision method
 - JS : Aliens shooting Method
-- JS : Explosion and removal of objects   **| Currently doing |**
+- JS : Explosion and removal of objects   
 - JS : Win/Lose conditions
 - JS : Score
-- **_JS + CSS : Difficulty_**
+- **_JS + CSS : Difficulty_**  **| Currently doing |**
 - **_JS + CSS : userShip sprite animation_**
 - **_JS + CSS : Alien sprite explosion_**
 - **_JS + CSS : Power-ups_**

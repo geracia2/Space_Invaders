@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
 body {
     box-sizing: border-box;
     margin: 0;
@@ -8,19 +10,22 @@ body {
     align-items: center;
     justify-content: center;
 }
+#scoreElm {
 
-/* started with grid and then changed to canvas
-.gameGrid {
-    height: 720;
-    width: 1280;
-    border: solid black 1px;
-    if spawning gird item aliens we want to warp them by row and space them out 
-    display: flex;
-    flex-wrap: wrap;
 }
-.alienDot {
-    width: 20px;
-    height: 20px;
-    background-color: red;
-} 
-*/
+#scoreBoard {
+    position: absolute;
+    z-index: 10;
+    color: aqua;
+    left: auto;
+    top: 43rem;
+    /* margin: 0; */
+    font-family: 'VT323', monospace;
+    font-size: 2rem;
+    font-stretch: expanded;
+
+}
+canvas {
+    border-radius: 30px;
+    box-shadow: rgba(0, 0, 0, 0.56) 0px 22px 70px 4px;
+}
