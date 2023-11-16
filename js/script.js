@@ -388,13 +388,15 @@ let usVar = {
     // --- below elements will be changeable ---
     playerScale : 1, 
     enemyScale : .5,
-    enemyRows : 3, // | STRETCH | add a random range to or above this
+    enemyRows : 7, // | STRETCH | add a random range to or above this
     enemyColumns: 2, // | STRETCH | add a random range to or above this
     gap: 20,
-    enemySpeed: .75, 
-    enemyFireRate: 200, // Lower is faster highly dependant to frame rate
+    enemySpeed: 1, 
+    enemyFireRate: 100, // Lower is faster highly dependant to frame rate
     enemySpawnRate: 500, // 3500 default, 500 test | STRETCH | difficulty settings
-    playerGameVelocity : 4, // check class if comm out. Global movement speed, redeclare per object as needed. 4 is a good number
+    playerGameVelocity : 6, // check class if comm out. Global movement speed, redeclare per object as needed. 4 is a good number
+    projectileSpeed: 10,
+    enemyProjectileSpeed: 4,
     // enemyTotal: this.enemyRows * this.enemyColumns,
     // --- below elements do not change ---
     safeArea : true, 
@@ -408,10 +410,8 @@ let usVar = {
     enemyDim: 90,
     projectileWidth : 8,
     projectileHeight : 30,
-    projectileSpeed: 6,
     enemyProjectileWidth: 8,
     enemyProjectileHeight: 20,
-    enemyProjectileSpeed: 2,
     explosionTile: 50,
     explosionFullHeight: 300,
     opacityDecay: 25,
@@ -469,11 +469,13 @@ function getRandomInt(min, max) {
 
 // Game over Alert
 function message() {
-    let text = "Game over!\nClick OK to restart or Cancel to quit.";
+    let text = "You were hit!\n--------------\nGame over!\n--------------\n                                       Click OK to keep going\n                                                      OR\n                                       Click Cancel to restart!";
     if (confirm(text) == true) {
       // do something
     } else {
-      // do something
+        location.reload();
+
+
     }
     // document.getElementById("demo").innerHTML = text;
   }
@@ -489,21 +491,24 @@ function message() {
 //     return newArray;
 // }
 
-function gameLoop(timeStamp){ // Set up flow of functions 
-    // console.log('game loop started')
-
-    ////////////////////////////////////////////////////////////////////////
-    // CALLING GAME LOOP
-    ///////////////////////////
-    // init > gameloop [ calcs, update > draw > gameloop ]
-    ///////////////////////////
+function gameLoop(){ // Set up flow of functions 
+    setTimeout(() => {
+        // console.log('game loop started')
     
-    update(secondsPassed); // Make changes to the properties
-    draw(); // Perform the drawing operations
-    window.requestAnimationFrame(gameLoop); // The loop function has reached it's end. Keep requesting new frames
-}
+        ////////////////////////////////////////////////////////////////////////
+        // CALLING GAME LOOP
+        ///////////////////////////
+        // init > gameloop [ calcs, update > draw > gameloop ]
+        ///////////////////////////
+        
+        update(secondsPassed); // Make changes to the properties
+        draw(); // Perform the drawing operations
+        window.requestAnimationFrame(gameLoop); // The loop function has reached it's end. Keep requesting new frames
+    }, 12);
+    }
 
 function draw(){ // Always need to draw the object first | make it available for updates | layer order
+    setTimeout(() => {
     // console.log('draw started')
     ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the entire canvas
     
@@ -527,10 +532,11 @@ function draw(){ // Always need to draw the object first | make it available for
         });
     });
     
-    
+}, 12);    
 }   
 
 function update(secondsPassed) { // Animation - final decision on how a change is made here
+    setTimeout(() => {
     // console.log(`update started`);
     
     player.borderCheck();
@@ -605,10 +611,10 @@ function update(secondsPassed) { // Animation - final decision on how a change i
                 enemyLaserArray.splice(i, 1)
             // }, 0);
             // console.log(`*** Yo've Been Hit ***`);
-            explosionArray.push(new Explosion(player.xColLeft+5, player.yColTop+20))
+            explosionArray.push(new Explosion(enemyLaser.xColLeft - 25, enemyLaser.yColBottom))
             setTimeout(() => {
                 message();
-            }, 150);
+            }, 200);
         }
     })
 
@@ -669,5 +675,5 @@ function update(secondsPassed) { // Animation - final decision on how a change i
         enemyGrid.push(new EnemyGenerator(usVar.enemyRows, usVar.enemyColumns));
         // console.log(enemyGrid);
     }
-    
+}, 12);   
 }
