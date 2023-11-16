@@ -50,10 +50,10 @@ This project is meant to test my skills after 5 weeks of introductory programmin
 - PhotoShop
 
 # Installation / How to use?
+https://geracia2.github.io/Space_Invaders/
+
 No installation is necessary.
-
 Runs directly in your browser. 
-
 This was tested in Chrome and LiveServer during development.
 
 # License
@@ -76,9 +76,11 @@ I wanted to combine my **_current knowledge_** as well as learn the following ne
 - keyboard inputs
 - sound
 
-Majority of canvas learning came from MDN documentation and SpicyYogurt
+Majority of canvas learning came from MDN documentation and SpicyYogurt. The initial feature list was sourced from Chris Course to start a road map but was not followed unless a solution could not be found for some logic. 
 https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial
 https://spicyyoghurt.com/tutorials/html5-javascript-game-development/images-and-sprite-animations
+https://chriscourses.com/courses/space-invaders/videos/create-a-space-invaders-game
+
 
 I've also set up a Notion board capturing all my learning.
 https://www.notion.so/Canvas-5d6735fe420947ca823f2db9bacddb64?pvs=4
@@ -116,7 +118,8 @@ _italics are stretch goals_
 - JS : Move rows of Aliens
 - JS : Spawn rows on an interval
 - JS : Aliens collision method
-- JS : Aliens shooting Method **| Currently doing |**
+- JS : Aliens shooting Method
+- JS : Explosion and removal of objects   **| Currently doing |**
 - JS : Win/Lose conditions
 - JS : Score
 - **_JS + CSS : Difficulty_**

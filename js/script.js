@@ -108,15 +108,14 @@ class UserShip {
 class EnemyShip {
     constructor(xPos, yPos, xVel, yVel) {
         this.id = '';
-        this.xVel = 0;
-        this.yVel = 0;
+        this.xVel = xVel;
+        this.yVel = yVel;
         this.sprite = enemyShipIMG;
         this.xPos = xPos;
         this.yPos = yPos;
-        // enemyShipIMG.onload = ()=> { 
-            this.width = usVarClac.enemyAdjustedDim;
-            this.height = usVarClac.enemyAdjustedDim;
-        // }
+        this.width = usVarClac.enemyAdjustedDim;
+        this.height = usVarClac.enemyAdjustedDim;
+        
     }
     draw() {
         if (this.sprite){
@@ -160,8 +159,8 @@ class EnemyGenerator { // this could have been just an array but with a class we
                     // this.enemyFleet[i].id += i;
                 }
             }
-            console.log(`  !!!!!! new enemy fleet:`);
-            console.dir(this.enemyFleet);
+            // console.log(`  !!!!!! new enemy fleet:`);
+            // console.dir(this.enemyFleet);
         // }
     }
     draw(){
@@ -241,22 +240,47 @@ class EnemyLaser {
     }
 }
 class Explosion {
-    constructor(xPos, yPos, frameUpdate, scale) {
+    constructor(xPos, yPos) {
             this.xPos = xPos;
             this.yPos = yPos;
-            this.dimension = usVar.explosionTile;
+            this.frame = 1
+            this.width = usVar.explosionTile;
+            this.height = usVar.explosionTile; // 300
+            // this.yCropStart = 0;// usVar.explosionTile * (usVar.explosionFrame - 1)
+            this.yCropStart = 150;// usVar.explosionTile * (usVar.explosionFrame - 1)
+            this.yCropEnd = usVar.explosionTile; // usVar.explosionTile * usVar.explosionFrame
+            this.xCropEndAfter = usVar.explosionTile;
             this.sprite = explosionIMG;
-            this.opacity = 100;
-            this.frame = usVar.explosionFrame
+            this.opacity = 1; 
     }
     draw(){
-            ctx.drawImage(this.sprite, this.xPos, this.yPos, this.dimension, this.dimension);
+        ctx.save();
+        ctx.globalAlpha = this.opacity;
+        ctx.drawImage(
+            this.sprite,     // img
+            0,               // startCropX | this. 1*# = 0
+            this.yCropStart, // startCropY | this.yPos 1*# = 50
+            this.xCropEndAfter, // endXCropAfter | explosionTile
+            this.yCropEnd,   // endYCropAfter#pxs | this.yPos + usVar.explosionTile
+            this.xPos,       // x position
+            this.yPos,       // y position
+            this.width,      // final width
+            this.height);    // final height
+        ctx.restore();
+        // ctx.drawImage(this.sprite, 0, 0, 192, 192, this.xPos, this.yPos, this.width, this.height) // frame 3,1
+        // ctx.drawImage(img, startCropX, startCropY, endXCropAfter, endYCropAfter, x, y, width, height)
+        // context.drawImage(img, startCropX, startCropY, endXCropAfter, endYCropAfter, x, y, width, height)
+            
     }
     update(){
             this.draw();
-            // this.xPos += this.xVel;
-            // this.yPos += this.yVel;
-            this.frame = frameUpdate;
+            // this.yCropStart += usVar.explosionTile
+            this.width += .1;
+            this.height += .1;
+            this.opacity -= .01 
+            
+
+
     }
 }
 ////////////////////////////////////////////////////////////////////////
@@ -287,7 +311,7 @@ const keyDown = addEventListener('keydown', (evt) => {
             // console.log('fire');
             keys.space.pressed = true;
             laserArray.push(new Laser(player.xMiddle - (usVar.projectileWidth / 2), (player.yMiddle - usVar.projectileHeight), -usVar.projectileSpeed))
-            console.log(laserArray);
+            // console.log(laserArray);
             break;
         default:
             // keys.a.pressed = false; // doesnt do anything?
@@ -332,7 +356,7 @@ let enemyLaserIMG = new Image();
 enemyLaserIMG.src = 'images/Sprites/Enemy_Laser_8x20.png';
 
 let explosionIMG = new Image();
-explosionIMG.src = 'images/Sprites/Explosions_SpriteSheet_90x300.png';
+explosionIMG.src = 'images/Sprites/Explosions_SpriteSheet_50x300.png';
 
 let enemyShipIMG = new Image();
 enemyShipIMG.src = 'images/Sprites/EnemyShip_90x90.png';
@@ -378,7 +402,7 @@ let usVar = {
     shipTileWidth : 192,
     shipTileHeight : 192,
     enemyTileWidth : 90,
-    enemyTileHeight : 90,
+    enemyTileHeight : 300,
     enemyDim: 90,
     projectileWidth : 8,
     projectileHeight : 30,
@@ -386,9 +410,10 @@ let usVar = {
     enemyProjectileWidth: 8,
     enemyProjectileHeight: 20,
     enemyProjectileSpeed: 2,
-    explosionTile: 90,
+    explosionTile: 50,
     explosionFullHeight: 300,
-    explosionFrame 0,
+    opacityDecay: 25,
+    explosionFrame: 0,
     // Sprite Sheet | Define the number of columns and rows in the sprite
     numColumns : 9,
     numRows : 8,
@@ -413,6 +438,7 @@ let usVarClac = { // JS doesn't like using .this with an init object so we need 
 console.log(`enemy size: ${usVarClac.enemyAdjustedDim}`)
 console.log(`canvas center: ${usVarClac.canvasCenter}`);
 console.log(`play speed: ${usVar.playerGameVelocity}`);
+
 ////////////////////////////////////////////////////////////////////////
 // CATCH ARRAYS
 ////////////////////////
@@ -467,12 +493,18 @@ function gameLoop(timeStamp){ // Set up flow of functions
 function draw(){ // Always need to draw the object first | make it available for updates | layer order
     // console.log('draw started')
     ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the entire canvas
-    // organize layers by bottom on top of list
+    
+    // organize layers by bottom on top of list | background > lasers > Player > explosions > enemy ships
     background.draw(); // init first draw
+    
     laserArray.forEach((value) => {value.draw()}) // init first draw per array value 
+    
     enemyLaserArray.forEach((value) => {value.draw()}) // init first draw per array value 
+    
     player.draw(); // init first draw
     
+    explosionArray.forEach((explosion) => {explosion.draw()});
+
     // move down the chain of updates till we reach individual EnemyShip
     // enemyGrid[] > EnemyGenerator() > enemyFleet[] > EnemyShip{} 
     enemyGrid.forEach(generator => {
@@ -481,7 +513,7 @@ function draw(){ // Always need to draw the object first | make it available for
             ship.draw();
         });
     });
-    explosionArray.forEach((value) => {value.draw()})
+    
     
 }   
 
@@ -492,10 +524,6 @@ function update(secondsPassed) { // Animation - final decision on how a change i
 
     player.update();
     
-    explosionArray.forEach((explosion) => {
-        explosion.update();
-    })
-
     // Player movement | if all are true
     if (keys.a.pressed && usVar.safeArea && !keys.d.pressed){ // a is pressed and inside safeArea
         player.xVel = -usVar.playerGameVelocity; // b/c of update(), position = velocity and xVel is 0 until now, -4 (left)
@@ -513,7 +541,22 @@ function update(secondsPassed) { // Animation - final decision on how a change i
         // set sprite clip back to 0
     }
     
-
+    explosionArray.forEach((explosion, i) => {
+        explosion.update()
+        explosion.frame++
+        // if (explosion.frame >= 7){
+        //     setTimeout(() => {
+        //         explosionArray.splice(i, 1)
+        //     }, 0);
+        // }
+        if (explosion.opacity <= 0){
+            // setTimeout(() => {
+                explosionArray.splice(i, 1)
+            // }, 0);
+        }
+        // console.log('updating explosoin')
+    });
+    
     // Track each laser
     laserArray.forEach((laser) => { // update each laser's properties
         laser.update();
@@ -543,10 +586,9 @@ function update(secondsPassed) { // Animation - final decision on how a change i
          && enemyLaser.xColRight  >= player.xColLeft
          && enemyLaser.xColLeft   <= player.xColRight
         ){
-            explosionArray.forEach((explosion, index) => {
-                explosion.update(player.xPos, play.yPos,);
-            })
-            console.log(`*** Yo've Been Hit ***`);
+            // console.log(`*** Yo've Been Hit ***`);
+            explosionArray.push(new Explosion(player.xColLeft+5, player.yColTop+20))
+            player = {}
         }
     })
 
@@ -577,9 +619,12 @@ function update(secondsPassed) { // Animation - final decision on how a change i
                  && laser.xColRight  <= ship.xColRight // las right before ship right === hit
                  && laser.xColLeft   >= ship.xColLeft // las left beyond ship left === hit
                 ){ 
+                    // EXPLOSION ON ENEMY 
+                    // console.log(`ship x: ${ship.xMiddle}, ship y: ${ship.yMiddle}`)
+                    explosionArray.push(new Explosion(ship.xPos, ship.yPos))
+                    
+                    // console.dir(explosionArray)
                     setTimeout(() => {
-                        // explosionArray.push(new Explosion(ship.xMiddle, ship.yMiddle))
-
                         generator.enemyFleet.splice(i, 1)
                         laserArray.splice(j, 1)
                     }, 0);
@@ -600,7 +645,7 @@ function update(secondsPassed) { // Animation - final decision on how a change i
 
     // Spawn a new fleet every 3500 frames
     if (usVar.gameFrame % usVar.enemySpawnRate === 0){ // |STRETCH| setup a random range and interval
-        console.log(`reach 3500`);
+        // console.log(`reach 3500`);
         enemyGrid.push(new EnemyGenerator(usVar.enemyRows, usVar.enemyColumns));
         // console.log(enemyGrid);
     }
