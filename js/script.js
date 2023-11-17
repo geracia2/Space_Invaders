@@ -381,7 +381,7 @@ const background = {
     }, 
     update(){
         this.yPos--;
-        console.log(this.yPos)
+        // console.log(this.yPos)
         if (this.yPos <= 0 ){
             this.yPos = 720
         }
@@ -394,8 +394,8 @@ const background = {
 ////////////////////////
 
 let secondsPassed = 0;
-let oldTimeStamp = 0;
-let fps;
+// let oldTimeStamp = 0;
+// let fps;
 
 // add all variables that will effect drawn objects first
 
@@ -486,18 +486,22 @@ function getRandomInt(min, max) {
 }
 
 // Game over Alert
-function message() {
+function loseMessage() {
     let text = "You were hit!\n--------------\nGame over!\n--------------\n                                       Click OK to keep going\n                                                      OR\n                                       Click Cancel to restart!";
     if (confirm(text) == true) {
-      // do something
     } else {
         location.reload();
-
-
     }
     // document.getElementById("demo").innerHTML = text;
-  }
-
+}
+function winMessage() {
+    let text = "                                                You did it!\n                                           ------------------\n                                           Congratulations\n                                           ------------------\n                                       Click OK to keep going\n                                                      OR\n                                       Click Cancel to restart!";
+    if (confirm(text) == true) {
+    } else {
+        location.reload();
+    }
+// document.getElementById("demo").innerHTML = text;
+}
 // function makeArray(columns, rows) {
 //     let newArray = []
 //     for (let i = 0; i < rows; i++) {
@@ -632,7 +636,7 @@ function update(secondsPassed) { // Animation - final decision on how a change i
             // console.log(`*** Yo've Been Hit ***`);
             explosionArray.push(new Explosion(enemyLaser.xColLeft - 25, enemyLaser.yColBottom))
             setTimeout(() => {
-                message();
+                loseMessage();
             }, 200);
         }
     })
@@ -668,7 +672,11 @@ function update(secondsPassed) { // Animation - final decision on how a change i
                     // console.log(`ship x: ${ship.xMiddle}, ship y: ${ship.yMiddle}`)
                     usVar.currentScore += usVar.enemyPointWorth;
                     explosionArray.push(new Explosion(ship.xPos, ship.yPos))
-                    
+                    setTimeout(() => {
+                        if (usVar.currentScore >= usVar.winScore){
+                            winMessage();
+                        }
+                    }, 200);
                     // console.dir(explosionArray)
                     setTimeout(() => {
                         generator.enemyFleet.splice(i, 1)

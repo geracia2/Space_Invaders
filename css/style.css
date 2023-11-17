@@ -3,15 +3,20 @@
 body {
     box-sizing: border-box;
     margin: 0;
+    font-family: 'VT323', monospace;
+    font-size: 2rem;
+    background-color: rgb(35, 5, 70);
 }
-
 .flexCtr {
     display: flex;
     align-items: center;
     justify-content: center;
 }
-#scoreElm {
-
+#controls {
+    position: relative;
+    top: -2rem;
+    margin: 0;
+    color: rgba(192, 192, 192, 0.56);
 }
 #scoreBoard {
     position: absolute;
@@ -20,12 +25,12 @@ body {
     left: auto;
     top: 43rem;
     /* margin: 0; */
-    font-family: 'VT323', monospace;
-    font-size: 2rem;
-    font-stretch: expanded;
-
 }
 canvas {
     border-radius: 30px;
-    box-shadow: rgba(0, 0, 0, 0.56) 0px 22px 70px 4px;
+    box-shadow: rgba(2, 105, 153, 0.56) 0px 22px 70px 4px;
+}
+#mainCanvas {
+    position: relative;
+    top: 2rem;
 }
