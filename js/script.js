@@ -23,6 +23,7 @@ function init(){
     ctx = canvas.getContext('2d'); // establish Context language '2d'
     const scoreElm = document.querySelector('#scoreElm')
     
+    audioSetup();
 
     /*
     // Don't currently need a resize feature if its always this dim. but here it is.
@@ -138,6 +139,7 @@ class EnemyShip {
     }
     shoot(enemyLaserArray){
         enemyLaserArray.push(new EnemyLaser(this.xMiddle, this.yBottom, usVar.enemyProjectileSpeed));
+        // laserSound ();
     }
 }
 
@@ -316,6 +318,8 @@ const keyDown = addEventListener('keydown', (evt) => {
             keys.space.pressed = true;
             laserArray.push(new Laser(player.xMiddle - (usVar.projectileWidth / 2), (player.yMiddle - usVar.projectileHeight), -usVar.projectileSpeed))
             // console.log(laserArray);
+            laserSound ();
+            console.log("laser audio should play");
             break;
         default:
             // keys.a.pressed = false; // doesnt do anything?
@@ -474,6 +478,51 @@ let enemyGrid = [new EnemyGenerator(usVar.enemyRows, usVar.enemyColumns, 'one')]
 // variables needed to set FPS
 // we do not need to define timeStamp as is is a protected word
 
+function explosionSound () {
+explosionAudio = new Audio();
+explosionAudio.src = 'audio/ArcadeExplosion.wav';
+explosionAudio.controls = false;
+explosionAudio.volume = 0.25;
+explosionAudio.loop = false;
+explosionAudio.autoplay = true;
+}
+function laserSound () {
+laserAudio = new Audio();
+laserAudio.src = 'audio/NiSound_SwiftLaserGunZap.wav';
+laserAudio.controls = false;
+laserAudio.volume = 0.05;
+laserAudio.loop = false;
+laserAudio.autoplay = true;
+}
+function gameOverSound(){
+gameOverAudio = new Audio();
+gameOverAudio.src = 'audio/GameOver.wav';
+gameOverAudio.controls = false;
+gameOverAudio.volume = 0.5;
+gameOverAudio.loop = false;
+gameOverAudio.autoplay = true;
+}
+function winSound (){
+winAudio = new Audio();
+winAudio.src = 'audio/AdaPietruszko_LevelUp.aac';
+winAudio.controls = false;
+winAudio.volume = 0.5;
+winAudio.loop = false;
+winAudio.autoplay = true;
+}
+function audioSetup() {
+    themeSong = new Audio();
+    themeSong.src = 'audio/Ian_Post-8Bit_Samba.mp3';
+    themeSong.controls = false;
+    themeSong.loop = true;
+    themeSong.volume = 0.1;
+    themeSong.autoplay = true;
+}
+
+//   audioContext = new ( window.AudioContext || window.webkitAudioContext )();
+//   audioSrc = audioContext.createMediaElementSource( audio ); 
+//   audioSrc.connect( analyser );
+
 
 ////////////////////////////////////////////////////////////////////////
 // FUNCTIONS
@@ -489,10 +538,10 @@ function getRandomInt(min, max) {
 function loseMessage() {
     let text = "You were hit!\n--------------\nGame over!\n--------------\n                                       Click OK to keep going\n                                                      OR\n                                       Click Cancel to restart!";
     if (confirm(text) == true) {
+        themeSong.play();
     } else {
         location.reload();
     }
-    // document.getElementById("demo").innerHTML = text;
 }
 function winMessage() {
     let text = "                                                You did it!\n                                           ------------------\n                                           Congratulations\n                                           ------------------\n                                       Click OK to keep going\n                                                      OR\n                                       Click Cancel to restart!";
@@ -500,8 +549,9 @@ function winMessage() {
     } else {
         location.reload();
     }
-// document.getElementById("demo").innerHTML = text;
 }
+
+
 // function makeArray(columns, rows) {
 //     let newArray = []
 //     for (let i = 0; i < rows; i++) {
@@ -557,7 +607,7 @@ function draw(){ // Always need to draw the object first | make it available for
 }, 12);    
 }   
 
-function update(secondsPassed) { // Animation - final decision on how a change is made here
+function update() { // Animation - final decision on how a change is made here
     setTimeout(() => {
     // console.log(`update started`);
     background.update()
@@ -577,6 +627,7 @@ function update(secondsPassed) { // Animation - final decision on how a change i
         // do something to fire
         // when laser update is placed here we get a continuous shot of lasers on each frame.
         // laserArray.push(new Laser(player.xMiddle - (usVar.projectileWidth * .5), player.yMiddle - (usVar.projectileHeight), -6))
+        // laserSound ();
         // console.log(laserArray);
     } else {
         player.xVel = 0;
@@ -635,7 +686,9 @@ function update(secondsPassed) { // Animation - final decision on how a change i
             // }, 0);
             // console.log(`*** Yo've Been Hit ***`);
             explosionArray.push(new Explosion(enemyLaser.xColLeft - 25, enemyLaser.yColBottom))
+            gameOverSound();
             setTimeout(() => {
+                themeSong.pause();
                 loseMessage();
             }, 200);
         }
@@ -672,13 +725,16 @@ function update(secondsPassed) { // Animation - final decision on how a change i
                     // console.log(`ship x: ${ship.xMiddle}, ship y: ${ship.yMiddle}`)
                     usVar.currentScore += usVar.enemyPointWorth;
                     explosionArray.push(new Explosion(ship.xPos, ship.yPos))
-                    setTimeout(() => {
-                        if (usVar.currentScore >= usVar.winScore){
+                    
+                    if (usVar.currentScore >= usVar.winScore){
+                        winSound ();
+                        setTimeout(() => {
                             winMessage();
-                        }
-                    }, 200);
-                    // console.dir(explosionArray)
+                        }, 200);
+                    }
+                        // console.dir(explosionArray)
                     setTimeout(() => {
+                        explosionSound();
                         generator.enemyFleet.splice(i, 1)
                         laserArray.splice(j, 1)
                     }, 0);
