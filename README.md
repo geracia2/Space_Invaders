@@ -5,6 +5,8 @@ https://geracia2.github.io/Space_Invaders/
 
 Space Invaders is a fixed shooter arcade game where the player moves a laser cannon horizontally across the bottom of the screen and fires at aliens overhead. The objective is to pan across a screen and shoot descending swarms of aliens, preventing them from reaching the bottom of the screen.
 
+![Screenshot](https://github.com/geracia2/Space_Invaders/blob/main/images/Screenshot.png "Screenshot")
+
 # Features
 - Interactive mechanics of movement and shooting
 - Win and lose states
